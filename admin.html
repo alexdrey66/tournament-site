@@ -104,25 +104,25 @@
 
     <div class="grid lg:grid-cols-3 gap-4 mb-10">
       <!-- Pools -->
-      <section class="glass rounded-2xl p-4 flex flex-col">
+      <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 2: Pools</h2>
-        <div class="space-y-2 flex-1 overflow-y-auto pr-1" id="poolList"></div>
+        <div class="space-y-2" id="poolList"></div>
         <button id="addPoolBtn"
-          class="mt-3 text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold self-start">
+          class="mt-3 text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold">
           + Add Pool
         </button>
       </section>
 
       <!-- Teams -->
-      <section class="glass rounded-2xl p-4 flex flex-col">
+      <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 3: Teams & Deductions</h2>
         <label class="block text-xs mb-1">Pool</label>
         <select id="teamPoolSelect" class="w-full rounded-md px-3 py-2 mb-3 text-xs"></select>
 
-        <div id="teamList" class="space-y-2 flex-1 overflow-y-auto pr-1"></div>
+        <div id="teamList" class="space-y-2"></div>
 
         <button id="addTeamBtn"
-          class="mt-3 text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold self-start">
+          class="mt-3 text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold">
           + Add Team
         </button>
         <p class="mt-3 text-[11px] text-slate-400">
@@ -132,7 +132,7 @@
       </section>
 
       <!-- Games -->
-      <section class="glass rounded-2xl p-4 flex flex-col">
+      <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 4: Games & Scores</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
@@ -157,10 +157,10 @@
           </div>
         </div>
 
-        <div id="gameList" class="space-y-3 flex-1 overflow-y-auto pr-1 mb-3"></div>
+        <div id="gameList" class="space-y-3 mb-3"></div>
 
         <button id="addGameBtn"
-          class="text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold self-start">
+          class="text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold">
           + Add Game
         </button>
 
@@ -178,6 +178,10 @@
 
     let state = { pools: [], teams: [], games: [] };
     let currentDivision = "14u-boys";
+
+    // Track last selected pools so we don't jump back to the first one
+    let lastTeamPoolId = null;
+    let lastGamePoolId = null;
 
     // Login overlay
     const loginOverlay = document.getElementById("loginOverlay");
@@ -235,7 +239,6 @@
       }
     }
 
-    // Super-simple save: no headers, no response parsing, show error text if any
     async function saveState() {
       setStatus("Saving…", "text-sky-300");
       saveBtn.disabled = true;
@@ -266,6 +269,11 @@
         btn.classList.add("bg-sky-500");
         btn.classList.remove("bg-slate-700");
         currentDivision = btn.dataset.division;
+
+        // reset remembered pools for new division
+        lastTeamPoolId = null;
+        lastGamePoolId = null;
+
         renderAll();
       });
     });
@@ -325,8 +333,12 @@
 
     function populatePoolSelects() {
       const pools = getDivisionPools();
-      const selects = [teamPoolSelect, gamePoolSelect];
-      selects.forEach(sel => {
+
+      // Remember current values before wiping options
+      const prevTeamPool = lastTeamPoolId || teamPoolSelect.value;
+      const prevGamePool = lastGamePoolId || gamePoolSelect.value;
+
+      [teamPoolSelect, gamePoolSelect].forEach(sel => {
         sel.innerHTML = "";
         pools.forEach(pool => {
           const opt = document.createElement("option");
@@ -335,6 +347,18 @@
           sel.appendChild(opt);
         });
       });
+
+      // Try to keep previous selections if still valid, otherwise fall back to first pool
+      const firstPoolId = pools[0] ? pools[0].id : "";
+
+      const newTeamPool = pools.some(p => p.id === prevTeamPool) ? prevTeamPool : firstPoolId;
+      const newGamePool = pools.some(p => p.id === prevGamePool) ? prevGamePool : firstPoolId;
+
+      teamPoolSelect.value = newTeamPool;
+      gamePoolSelect.value = newGamePool;
+
+      lastTeamPoolId = newTeamPool;
+      lastGamePoolId = newGamePool;
     }
 
     // Teams
@@ -342,6 +366,8 @@
       const pools = getDivisionPools();
       const teams = getDivisionTeams();
       const selectedPoolId = teamPoolSelect.value || (pools[0] && pools[0].id);
+
+      lastTeamPoolId = selectedPoolId || null;
 
       if (pools.length === 0) {
         teamListEl.innerHTML = `<p class="text-xs text-slate-400">Create a pool first.</p>`;
@@ -426,6 +452,8 @@
       const pools = getDivisionPools();
       const teams = getDivisionTeams();
       const selectedPoolId = gamePoolSelect.value || (pools[0] && pools[0].id);
+
+      lastGamePoolId = selectedPoolId || null;
 
       if (pools.length === 0) {
         gameListEl.innerHTML = `<p class="text-xs text-slate-400">Create a pool first.</p>`;
@@ -612,8 +640,14 @@
     });
 
     function attachPoolSelectHandlers() {
-      teamPoolSelect.addEventListener("change", renderTeams);
-      gamePoolSelect.addEventListener("change", renderGames);
+      teamPoolSelect.addEventListener("change", () => {
+        lastTeamPoolId = teamPoolSelect.value || null;
+        renderTeams();
+      });
+      gamePoolSelect.addEventListener("change", () => {
+        lastGamePoolId = gamePoolSelect.value || null;
+        renderGames();
+      });
     }
 
     function renderAll() {
