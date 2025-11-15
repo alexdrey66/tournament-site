@@ -307,7 +307,7 @@
       poolListEl.innerHTML = "";
       pools.forEach(pool => {
         const row = document.createElement("div");
-        row.className = "card px-3 py-2 flex flex-col sm:flex-row sm:items-center gap-2 text-sm";
+        row.className = "card px-3 py-2 flex flex-col gap-2 text-sm";
 
         const input = document.createElement("input");
         input.type = "text";
@@ -320,7 +320,7 @@
 
         const del = document.createElement("button");
         del.type = "button";
-        del.className = "self-start sm:self-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
+        del.className = "self-start sm:self-auto w-full sm:w-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
         del.textContent = "Delete";
         del.addEventListener("click", () => {
           state.pools = state.pools.filter(p => p.id !== pool.id);
@@ -395,7 +395,8 @@
 
       filteredTeams.forEach(team => {
         const row = document.createElement("div");
-        row.className = "card px-3 py-2 flex flex-col sm:flex-row sm:items-center gap-3 text-sm";
+        // <-- STACKED layout so delete button stays inside the card
+        row.className = "card px-3 py-2 flex flex-col gap-2 text-sm";
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
@@ -427,7 +428,8 @@
 
         const del = document.createElement("button");
         del.type = "button";
-        del.className = "self-start sm:self-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
+        // full-width on small screens, normal on larger
+        del.className = "self-start sm:self-auto w-full sm:w-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
         del.textContent = "Delete";
         del.addEventListener("click", () => {
           state.teams = state.teams.filter(t => t.id !== team.id);
