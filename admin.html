@@ -7,17 +7,45 @@
 </head>
 <body style="margin:0; background:#020617;">
 
-<div id="tournament-admin">
+<!-- PASSWORD GATE -->
+<div id="login-screen">
+  <div class="login-page">
+    <div class="login-card">
+      <h1>Admin Access</h1>
+      <p class="login-text">
+        This area is for tournament staff only. Please enter the admin password to continue.
+      </p>
+
+      <label for="admin-password">Password</label>
+      <input
+        id="admin-password"
+        type="password"
+        autocomplete="off"
+        placeholder="Enter password"
+        onkeydown="if(event.key==='Enter'){handleLogin();}"
+      />
+
+      <button type="button" class="login-btn" onclick="handleLogin()">Unlock Admin</button>
+      <p id="login-error" class="login-error" aria-live="polite"></p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN ADMIN UI (HIDDEN UNTIL AUTH) -->
+<div id="tournament-admin" style="display:none;">
   <div class="ta-page">
     <div class="ta-card">
       <div class="ta-header">
         <div>
-          <h1>AYSO Tournament Admin</h1>
+          <h2>AYSO Tournament Admin</h2>
           <p class="ta-muted">
             Manage divisions, pools, teams, and games. Data is stored in this browser using localStorage.
           </p>
         </div>
-        <span class="ta-pill">Admin</span>
+        <div class="ta-header-actions">
+          <span class="ta-pill">Admin</span>
+          <button type="button" class="ta-lock-btn" onclick="lockAdmin()">Lock Admin</button>
+        </div>
       </div>
 
       <!-- Division selector -->
@@ -102,35 +130,180 @@
 </div>
 
 <style>
-#tournament-admin * { box-sizing:border-box; }
-#tournament-admin { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; color:#e5e7eb; }
-.ta-page { max-width:1000px; margin:0 auto; padding:16px; }
+/* General font + colors shared */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e5e7eb;
+}
+
+/* LOGIN SCREEN */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: radial-gradient(circle at top, #1f2937 0, #020617 52%, #000 100%);
+}
+
+.login-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.login-card {
+  background: #020617;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
+  max-width: 420px;
+  width: 100%;
+  padding: 20px 22px 22px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.login-card h1 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  color: #fef9c3;
+}
+
+.login-text {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.login-card label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 4px;
+}
+
+#admin-password {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+#admin-password:focus {
+  outline: 1px solid #38bdf8;
+  border-color: #38bdf8;
+}
+
+.login-btn {
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #22c55e;
+  color: #022c22;
+  transition: background 0.2s ease, transform 0.08s ease;
+}
+
+.login-btn:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.login-error {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: #fecaca;
+}
+
+/* MAIN ADMIN UI */
+#tournament-admin * { box-sizing: border-box; }
+.ta-page { max-width: 1000px; margin: 0 auto; padding: 16px; }
 .ta-card {
-  background:#020617; border-radius:12px; border:1px solid #1f2937;
-  padding:16px; box-shadow:0 18px 36px rgba(0,0,0,0.5);
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  padding: 16px;
+  box-shadow: 0 18px 36px rgba(0,0,0,0.5);
 }
 .ta-header {
-  display:flex; justify-content:space-between; align-items:flex-start;
-  gap:12px; margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
 }
-.ta-header h1 { margin:0 0 4px; font-size:1.4rem; color:#fef9c3; }
+.ta-header h2 {
+  margin:0 0 4px;
+  font-size:1.35rem;
+  color:#fef9c3;
+}
 .ta-muted { font-size:0.8rem; color:#9ca3af; margin:0; }
-.ta-pill {
-  border-radius:999px; padding:4px 10px; border:1px solid #f97316;
-  font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:#fed7aa;
+
+.ta-header-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
+
+.ta-pill {
+  border-radius:999px;
+  padding:4px 10px;
+  border:1px solid #f97316;
+  font-size:0.7rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:#fed7aa;
+}
+
+.ta-lock-btn {
+  border-radius:999px;
+  border:1px solid #64748b;
+  padding:4px 10px;
+  font-size:0.75rem;
+  background:#0f172a;
+  color:#e5e7eb;
+  cursor:pointer;
+}
+.ta-lock-btn:hover {
+  background:#1f2937;
+}
+
+/* Sections, forms, lists */
 .ta-section { margin-bottom:14px; }
 .ta-section-title { font-size:0.95rem; font-weight:600; margin-bottom:4px; }
 .ta-small-muted { font-size:0.75rem; color:#9ca3af; }
+
 label { font-size:0.75rem; color:#9ca3af; display:block; margin-bottom:2px; }
+
 input, select {
-  width:100%; padding:6px 8px; border-radius:8px; border:1px solid #374151;
-  background:#020617; color:#e5e7eb; font-size:0.85rem;
+  width:100%;
+  padding:6px 8px;
+  border-radius:8px;
+  border:1px solid #374151;
+  background:#020617;
+  color:#e5e7eb;
+  font-size:0.85rem;
 }
-input:focus, select:focus { outline:1px solid #38bdf8; border-color:#38bdf8; }
+input:focus, select:focus {
+  outline:1px solid #38bdf8;
+  border-color:#38bdf8;
+}
+
 button {
-  border-radius:999px; border:none; padding:6px 12px; font-size:0.8rem;
-  cursor:pointer; background:#4b5563; color:#e5e7eb;
+  border-radius:999px;
+  border:none;
+  padding:6px 12px;
+  font-size:0.8rem;
+  cursor:pointer;
+  background:#4b5563;
+  color:#e5e7eb;
 }
 button:hover { background:#6b7280; }
 .ta-btn-primary { background:#22c55e; color:#022c22; font-weight:600; }
@@ -139,30 +312,45 @@ button:hover { background:#6b7280; }
 .ta-btn-danger:hover { background:#991b1b; }
 
 .ta-grid {
-  display:grid; grid-template-columns:1fr; gap:12px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
 }
 @media(min-width:850px){
   .ta-grid { grid-template-columns:1fr 1fr; }
 }
 
 .ta-form-row {
-  display:flex; gap:6px; margin-bottom:8px;
+  display:flex;
+  gap:6px;
+  margin-bottom:8px;
 }
 .ta-form-row input { flex:1; }
 
 .ta-list {
-  list-style:none; padding:0; margin:0;
-  max-height:180px; overflow-y:auto; border-radius:8px; border:1px solid #1f2937;
+  list-style:none;
+  padding:0;
+  margin:0;
+  max-height:180px;
+  overflow-y:auto;
+  border-radius:8px;
+  border:1px solid #1f2937;
 }
 .ta-list li {
-  padding:6px 8px; font-size:0.8rem; display:flex;
-  justify-content:space-between; align-items:center; border-bottom:1px solid #1f2937;
+  padding:6px 8px;
+  font-size:0.8rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #1f2937;
 }
 .ta-list li:last-child { border-bottom:none; }
 .ta-list button { font-size:0.7rem; padding:4px 8px; }
 
 .ta-form-grid {
-  display:grid; grid-template-columns:1fr; gap:8px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
 }
 @media(min-width:850px){
   .ta-form-grid {
@@ -170,33 +358,100 @@ button:hover { background:#6b7280; }
   }
 }
 
+/* Games list */
 .ta-games-list {
-  border-radius:10px; border:1px solid #1f2937; max-height:260px;
-  overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:6px;
+  border-radius:10px;
+  border:1px solid #1f2937;
+  max-height:260px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:6px;
 }
 .ta-game-row {
-  display:grid; grid-template-columns:2fr 1fr 1fr; gap:6px;
-  padding:6px 8px; border-radius:8px; background:#020617; border:1px solid #111827;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:6px;
+  padding:6px 8px;
+  border-radius:8px;
+  background:#020617;
+  border:1px solid #111827;
   font-size:0.8rem;
 }
 .ta-game-main { display:flex; flex-direction:column; gap:2px; }
 .ta-game-meta { color:#9ca3af; font-size:0.7rem; }
 .ta-game-teams { font-size:0.85rem; }
 .ta-game-scores {
-  display:flex; align-items:center; gap:4px; justify-content:flex-start;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  justify-content:flex-start;
 }
 .ta-game-scores input {
-  width:42px; text-align:center; padding:4px 4px; font-size:0.8rem;
+  width:42px;
+  text-align:center;
+  padding:4px 4px;
+  font-size:0.8rem;
 }
-.ta-game-actions { display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
+.ta-game-actions {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  align-items:flex-end;
+}
 
 .ta-footer {
-  margin-top:16px; padding-top:10px; border-top:1px solid #1f2937;
-  display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;
+  margin-top:16px;
+  padding-top:10px;
+  border-top:1px solid #1f2937;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
 }
 </style>
 
 <script>
+/* ---- Password gate logic ---- */
+const ADMIN_PASSWORD = "PLAYSOCCER";
+const ADMIN_UNLOCK_KEY = "tournament_admin_unlocked_v1";
+
+function showAdminUI() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("tournament-admin").style.display = "block";
+}
+
+function handleLogin() {
+  const input = document.getElementById("admin-password");
+  const error = document.getElementById("login-error");
+  const value = (input.value || "").trim();
+
+  if (!value) {
+    error.textContent = "Please enter the password.";
+    return;
+  }
+
+  if (value === ADMIN_PASSWORD) {
+    localStorage.setItem(ADMIN_UNLOCK_KEY, "true");
+    input.value = "";
+    error.textContent = "";
+    showAdminUI();
+  } else {
+    error.textContent = "Incorrect password. Please try again.";
+  }
+}
+
+function lockAdmin() {
+  localStorage.removeItem(ADMIN_UNLOCK_KEY);
+  document.getElementById("tournament-admin").style.display = "none";
+  document.getElementById("login-screen").style.display = "block";
+  document.getElementById("admin-password").value = "";
+  document.getElementById("login-error").textContent = "";
+}
+
+/* ---- Tournament data logic ---- */
 const TA_STORAGE_KEY = "tournament_manager_v1";
 
 let taState = {
@@ -254,7 +509,7 @@ function taCurrentDivisionId() {
   return sel.value;
 }
 
-// ------- Pools -------
+/* Pools */
 function taAddPool() {
   const nameInput = document.getElementById("ta-pool-name");
   const name = nameInput.value.trim();
@@ -269,7 +524,6 @@ function taAddPool() {
 }
 
 function taDeletePool(id) {
-  // remove games and teams in that pool too
   taState.games = taState.games.filter(g => g.poolId !== id);
   taState.teams = taState.teams.filter(t => t.poolId !== id);
   taState.pools = taState.pools.filter(p => p.id !== id);
@@ -295,7 +549,6 @@ function taRenderPools() {
   });
 }
 
-// keep the pool selectors in sync
 function taSyncPoolSelectors() {
   const divId = taCurrentDivisionId();
   const pools = taState.pools.filter(p => p.divisionId === divId);
@@ -317,7 +570,7 @@ function taSyncPoolSelectors() {
   taSyncGameTeamSelectors();
 }
 
-// ------- Teams -------
+/* Teams */
 function taAddTeam() {
   const poolId = document.getElementById("ta-team-pool").value;
   if (!poolId) return;
@@ -360,7 +613,7 @@ function taRenderTeams() {
   });
 }
 
-// ------- Games -------
+/* Games */
 function taSyncGameTeamSelectors() {
   const poolId = document.getElementById("ta-game-pool").value;
   const teams = taState.teams.filter(t => t.poolId === poolId);
@@ -478,7 +731,7 @@ function taRenderGames() {
   });
 }
 
-// ------- Clear all -------
+/* Clear all */
 function taClearAll() {
   if (!confirm("This will clear all tournament data stored in this browser. Continue?")) return;
   localStorage.removeItem(TA_STORAGE_KEY);
@@ -489,7 +742,7 @@ function taClearAll() {
   taRenderGames();
 }
 
-// ------- Init -------
+/* Init */
 function taInit() {
   taLoadState();
   taInitDivisionSelect();
@@ -508,7 +761,15 @@ function taInit() {
   });
 }
 
-taInit();
+/* Boot */
+(function boot() {
+  // If previously unlocked in this browser, skip password screen
+  const unlocked = localStorage.getItem(ADMIN_UNLOCK_KEY) === "true";
+  if (unlocked) {
+    showAdminUI();
+  }
+  taInit();
+})();
 </script>
 
 </body>
