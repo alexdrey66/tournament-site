@@ -39,7 +39,7 @@
         <div>
           <h2>AYSO Tournament Admin</h2>
           <p class="ta-muted">
-            Manage divisions, pools, teams, and games. Data is stored in this browser using localStorage.
+            Manage divisions, pools, teams, games, and penalties. Data is stored in this browser using localStorage.
           </p>
         </div>
         <div class="ta-header-actions">
@@ -331,7 +331,7 @@ button:hover { background:#6b7280; }
   list-style:none;
   padding:0;
   margin:0;
-  max-height:180px;
+  max-height:200px;
   overflow-y:auto;
   border-radius:8px;
   border:1px solid #1f2937;
@@ -411,6 +411,29 @@ button:hover { background:#6b7280; }
   align-items:center;
   justify-content:space-between;
 }
+
+/* Team penalty layout */
+.ta-team-main {
+  flex: 1;
+}
+
+.ta-team-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ta-team-meta label {
+  margin: 0;
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.ta-team-meta input {
+  width: 60px;
+  padding: 4px 6px;
+  font-size: 0.8rem;
+}
 </style>
 
 <script>
@@ -456,7 +479,7 @@ const TA_STORAGE_KEY = "tournament_manager_v1";
 
 let taState = {
   pools: [],   // {id, name, divisionId}
-  teams: [],   // {id, name, poolId}
+  teams: [],   // {id, name, poolId, penalty?}
   games: []    // {id, poolId, teamAId, teamBId, dateTime, field, scoreA, scoreB}
 };
 
@@ -580,7 +603,7 @@ function taAddTeam() {
   if (!name) return;
 
   const id = "team-" + Date.now() + "-" + Math.random().toString(36).slice(2,7);
-  taState.teams.push({ id, name, poolId });
+  taState.teams.push({ id, name, poolId, penalty: 0 });
   taSaveState();
   nameInput.value = "";
   taRenderTeams();
@@ -596,6 +619,15 @@ function taDeleteTeam(id) {
   taSyncGameTeamSelectors();
 }
 
+function taUpdateTeamPenalty(teamId, value) {
+  const t = taState.teams.find(t => t.id === teamId);
+  if (!t) return;
+  const num = value === "" ? 0 : Number(value);
+  if (Number.isNaN(num) || num < 0) return;
+  t.penalty = num;
+  taSaveState();
+}
+
 function taRenderTeams() {
   const ul = document.getElementById("ta-team-list");
   ul.innerHTML = "";
@@ -604,10 +636,19 @@ function taRenderTeams() {
 
   const teams = taState.teams.filter(t => t.poolId === poolId);
   teams.forEach(t => {
+    const penalty = t.penalty ? Number(t.penalty) : 0;
     const li = document.createElement("li");
     li.innerHTML = `
-      <span>${t.name}</span>
-      <button type="button" onclick="taDeleteTeam('${t.id}')">Delete</button>
+      <div class="ta-team-main">
+        <span>${t.name}</span>
+      </div>
+      <div class="ta-team-meta">
+        <label>Penalty</label>
+        <input type="number" min="0" step="1"
+          value="${penalty}"
+          onchange="taUpdateTeamPenalty('${t.id}', this.value)" />
+        <button type="button" onclick="taDeleteTeam('${t.id}')">Delete</button>
+      </div>
     `;
     ul.appendChild(li);
   });
@@ -763,7 +804,6 @@ function taInit() {
 
 /* Boot */
 (function boot() {
-  // If previously unlocked in this browser, skip password screen
   const unlocked = localStorage.getItem(ADMIN_UNLOCK_KEY) === "true";
   if (unlocked) {
     showAdminUI();
