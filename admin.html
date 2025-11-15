@@ -2,812 +2,901 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AYSO Tournament – Admin</title>
+  <title>AYSO Area 10W – Tournament Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body style="margin:0; background:#020617;">
+  <style>
+    :root {
+      color-scheme: dark;
+    }
 
-<!-- PASSWORD GATE -->
-<div id="login-screen">
-  <div class="login-page">
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #000 60%);
+      color: #e5e7eb;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    header {
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+    }
+
+    h1 {
+      margin: 4px 0;
+      font-size: 1.7rem;
+      color: #fef9c3;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .tagline {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.12), transparent 60%),
+        #020617;
+      padding: 10px 12px 12px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel h2 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+      color: #e5e7eb;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .panel h3 {
+      margin: 6px 0 4px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+    }
+
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+      align-items: flex-end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1 1 120px;
+      min-width: 120px;
+    }
+
+    label {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    select {
+      border-radius: 9px;
+      border: 1px solid #1f2937;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="datetime-local"]:focus,
+    select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      background: linear-gradient(to right, #3b82f6, #22c55e);
+      color: #0b1120;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    button.secondary {
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      border: 1px solid #374151;
+    }
+
+    button.danger {
+      background: rgba(185, 28, 28, 0.95);
+      color: #fee2e2;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    ul.list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 210px;
+      overflow-y: auto;
+    }
+
+    .pool-item,
+    .team-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #111827;
+      font-size: 0.8rem;
+      gap: 8px;
+    }
+
+    .pool-name,
+    .team-name {
+      color: #e5e7eb;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .team-penalty {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .team-penalty input {
+      width: 52px;
+    }
+
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .game-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr) auto;
+      gap: 6px;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #111827;
+      font-size: 0.8rem;
+      align-items: center;
+    }
+
+    @media (max-width: 800px) {
+      .game-row {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr);
+        grid-template-rows: auto auto;
+      }
+
+      .game-row .game-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+      }
+    }
+
+    .game-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .game-meta {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .game-teams {
+      font-weight: 500;
+      color: #e5e7eb;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .game-scores {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .game-scores input {
+      width: 52px;
+      text-align: center;
+    }
+
+    .game-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .small-muted {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .login-card {
+      max-width: 360px;
+      margin: 60px auto;
+      padding: 16px 18px 18px;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.16), transparent 60%),
+        #020617;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5);
+    }
+
+    .login-title {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      color: #fef9c3;
+    }
+
+    .login-sub {
+      margin: 0 0 12px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .login-error {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: #fecaca;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+
+    .toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .toolbar-label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="page" style="display: none;">
     <div class="login-card">
-      <h1>Admin Access</h1>
-      <p class="login-text">
-        This area is for tournament staff only. Please enter the admin password to continue.
+      <p class="eyebrow">Tournament Admin</p>
+      <h1 class="login-title">Sign in</h1>
+      <p class="login-sub">
+        This page is for tournament staff only. Enter the admin password to manage
+        pools, teams, and scores.
+      </p>
+      <div class="field">
+        <label for="admin-password">Admin password</label>
+        <input type="password" id="admin-password" autocomplete="off" />
+      </div>
+      <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 8px; align-items: center;">
+        <span id="login-error" class="login-error"></span>
+        <button type="button" onclick="handleLogin()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN UI -->
+  <div id="tournament-admin" class="page" style="display: none;">
+    <header>
+      <div class="eyebrow">AYSO Area 10W League Tournament</div>
+      <h1>Tournament Admin</h1>
+      <p class="subtitle">Manage divisions, pools, teams, and scores. Changes update all public standings pages.</p>
+      <p class="tagline">
+        Scoring: Win 6 pts · Tie 3 pts · Goals 1 pt (max 3) · Shutout +1 pt · Penalties subtract from total.
       </p>
 
-      <label for="admin-password">Password</label>
-      <input
-        id="admin-password"
-        type="password"
-        autocomplete="off"
-        placeholder="Enter password"
-        onkeydown="if(event.key==='Enter'){handleLogin();}"
-      />
-
-      <button type="button" class="login-btn" onclick="handleLogin()">Unlock Admin</button>
-      <p id="login-error" class="login-error" aria-live="polite"></p>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN ADMIN UI (HIDDEN UNTIL AUTH) -->
-<div id="tournament-admin" style="display:none;">
-  <div class="ta-page">
-    <div class="ta-card">
-      <div class="ta-header">
-        <div>
-          <h2>AYSO Tournament Admin</h2>
-          <p class="ta-muted">
-            Manage divisions, pools, teams, games, and penalties. Data is stored in this browser using localStorage.
-          </p>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span class="toolbar-label">Working in division:</span>
+          <select id="ta-division"></select>
         </div>
-        <div class="ta-header-actions">
-          <span class="ta-pill">Admin</span>
-          <button type="button" class="ta-lock-btn" onclick="lockAdmin()">Lock Admin</button>
+        <div class="toolbar-right">
+          <button type="button" class="secondary" onclick="lockAdmin()">Lock admin</button>
+          <button type="button" class="danger" onclick="taClearAll()">Clear ALL data</button>
         </div>
       </div>
+    </header>
 
-      <!-- Division selector -->
-      <div class="ta-section">
-        <div class="ta-section-title">Division</div>
-        <label for="ta-division">Select Division</label>
-        <select id="ta-division"></select>
-        <p class="ta-small-muted">
-          Divisions are fixed IDs so public pages can read them:
-          14U, 12U, 10U – Boys &amp; Girls.
-        </p>
-      </div>
+    <div class="layout">
+      <!-- LEFT: Pools + teams -->
+      <section class="panel">
+        <h2>
+          Pools &amp; Teams
+          <span class="badge">Structure</span>
+        </h2>
 
-      <div class="ta-grid">
         <!-- Pools -->
-        <div class="ta-section">
-          <div class="ta-section-title">Pools</div>
-          <div class="ta-form-row">
-            <input id="ta-pool-name" type="text" placeholder="Pool name (e.g., Pool A)" />
-            <button type="button" onclick="taAddPool()">Add Pool</button>
+        <h3>Pools in this division</h3>
+        <div class="field-row">
+          <div class="field">
+            <label for="ta-pool-name">New pool name</label>
+            <input id="ta-pool-name" type="text" placeholder="e.g., Pool A" />
           </div>
-          <ul id="ta-pool-list" class="ta-list"></ul>
+          <button type="button" onclick="taAddPool()">Add pool</button>
         </div>
+        <ul id="ta-pool-list" class="list"></ul>
+
+        <hr style="border:none; border-top:1px solid #111827; margin:10px 0;" />
 
         <!-- Teams -->
-        <div class="ta-section">
-          <div class="ta-section-title">Teams</div>
-          <label for="ta-team-pool">Pool</label>
-          <select id="ta-team-pool"></select>
-          <div class="ta-form-row" style="margin-top:6px;">
-            <input id="ta-team-name" type="text" placeholder="Team name" />
-            <button type="button" onclick="taAddTeam()">Add Team</button>
+        <h3>Teams</h3>
+        <div class="field-row">
+          <div class="field">
+            <label for="ta-team-pool">Pool</label>
+            <select id="ta-team-pool"></select>
           </div>
-          <ul id="ta-team-list" class="ta-list"></ul>
+          <div class="field">
+            <label for="ta-team-name">New team name</label>
+            <input id="ta-team-name" type="text" placeholder="e.g., 14U B #1" />
+          </div>
+          <button type="button" onclick="taAddTeam()">Add team</button>
         </div>
-      </div>
+        <ul id="ta-team-list" class="list"></ul>
+      </section>
 
-      <!-- Games -->
-      <div class="ta-section" style="margin-top:18px;">
-        <div class="ta-section-title">Games</div>
+      <!-- RIGHT: Games -->
+      <section class="panel">
+        <h2>
+          Games &amp; Scores
+          <span class="badge">Results</span>
+        </h2>
 
-        <div class="ta-form-grid">
-          <div>
+        <h3>Create game</h3>
+        <div class="field-row">
+          <div class="field">
             <label for="ta-game-pool">Pool</label>
-            <select id="ta-game-pool" onchange="taRenderGames()"></select>
+            <select id="ta-game-pool"></select>
           </div>
-          <div>
-            <label for="ta-game-teamA">Team A</label>
-            <select id="ta-game-teamA"></select>
-          </div>
-          <div>
-            <label for="ta-game-teamB">Team B</label>
-            <select id="ta-game-teamB"></select>
-          </div>
-          <div>
-            <label for="ta-game-datetime">Date/Time (optional)</label>
+          <div class="field">
+            <label for="ta-game-datetime">Date &amp; time</label>
             <input id="ta-game-datetime" type="datetime-local" />
           </div>
-          <div>
-            <label for="ta-game-field">Field (optional)</label>
-            <input id="ta-game-field" type="text" placeholder="Field" />
+          <div class="field">
+            <label for="ta-game-field">Field</label>
+            <input id="ta-game-field" type="text" placeholder="e.g., Field 1" />
           </div>
         </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ta-game-teamA">Home team</label>
+            <select id="ta-game-teamA"></select>
+          </div>
+          <div class="field">
+            <label for="ta-game-teamB">Away team</label>
+            <select id="ta-game-teamB"></select>
+          </div>
+          <button type="button" onclick="taAddGame()">Add game</button>
+        </div>
 
-        <button type="button" class="ta-btn-primary" onclick="taAddGame()" style="margin-top:8px;">
-          Add Game
-        </button>
+        <p class="small-muted" style="margin-top: 4px;">
+          Scores and penalties update standings immediately on the public pages.
+          Date/time and field stay in the form so you can quickly add multiple games in the same slot.
+        </p>
 
-        <div id="ta-games-list" class="ta-games-list" style="margin-top:10px;"></div>
-      </div>
-
-      <div class="ta-footer">
-        <button type="button" class="ta-btn-danger" onclick="taClearAll()">
-          Clear All Data (this browser)
-        </button>
-        <span class="ta-small-muted">
-          This only clears localStorage in this browser. Public pages on this same browser will update accordingly.
-        </span>
-      </div>
+        <h3 style="margin-top: 10px;">Games in selected pool</h3>
+        <div id="ta-games-list" class="games-list"></div>
+      </section>
     </div>
   </div>
-</div>
 
-<style>
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: #e5e7eb;
-}
+  <script>
+    /* ---- CONFIG ---- */
+    const API_URL = "https://script.google.com/macros/s/AKfycbzxMdFv4Ztw-4ZoXI-m-AJGKK2ops8ZBs-uhLLVpecEeMy628wnn5vssVC17Z87kTfLow/exec";
+    const ADMIN_PASSWORD = "PLAYSOCCER";
+    const ADMIN_UNLOCK_KEY = "tournament_admin_unlocked_v1";
 
-/* LOGIN SCREEN */
-#login-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  background: radial-gradient(circle at top, #1f2937 0, #020617 52%, #000 100%);
-}
+    /* ---- STATE ---- */
+    let taState = {
+      pools: [],   // {id, name, divisionId}
+      teams: [],   // {id, name, poolId, penalty}
+      games: []    // {id, poolId, teamAId, teamBId, dateTime, field, scoreA, scoreB}
+    };
 
-.login-page {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-}
+    const TA_DIVISIONS = [
+      { id: "14u-boys",  name: "14U Boys"  },
+      { id: "14u-girls", name: "14U Girls" },
+      { id: "12u-boys",  name: "12U Boys"  },
+      { id: "12u-girls", name: "12U Girls" },
+      { id: "10u-boys",  name: "10U Boys"  },
+      { id: "10u-girls", name: "10U Girls" }
+    ];
 
-.login-card {
-  background: #020617;
-  border-radius: 14px;
-  border: 1px solid #1f2937;
-  max-width: 420px;
-  width: 100%;
-  padding: 20px 22px 22px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-}
-
-.login-card h1 {
-  margin: 0 0 8px;
-  font-size: 1.4rem;
-  color: #fef9c3;
-}
-
-.login-text {
-  margin: 0 0 16px;
-  font-size: 0.9rem;
-  color: #9ca3af;
-}
-
-.login-card label {
-  font-size: 0.8rem;
-  color: #9ca3af;
-  display: block;
-  margin-bottom: 4px;
-}
-
-#admin-password {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #374151;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-#admin-password:focus {
-  outline: 1px solid #38bdf8;
-  border-color: #38bdf8;
-}
-
-.login-btn {
-  width: 100%;
-  border-radius: 999px;
-  border: none;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: #22c55e;
-  color: #022c22;
-  transition: background 0.2s ease, transform 0.08s ease;
-}
-
-.login-btn:hover {
-  background: #16a34a;
-  transform: translateY(-1px);
-}
-
-.login-error {
-  margin: 8px 0 0;
-  font-size: 0.8rem;
-  color: #fecaca;
-}
-
-/* MAIN ADMIN UI */
-#tournament-admin * { box-sizing: border-box; }
-.ta-page { max-width: 1000px; margin: 0 auto; padding: 16px; }
-.ta-card {
-  background: #020617;
-  border-radius: 12px;
-  border: 1px solid #1f2937;
-  padding: 16px;
-  box-shadow: 0 18px 36px rgba(0,0,0,0.5);
-}
-.ta-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  margin-bottom:14px;
-}
-.ta-header h2 {
-  margin:0 0 4px;
-  font-size:1.35rem;
-  color:#fef9c3;
-}
-.ta-muted { font-size:0.8rem; color:#9ca3af; margin:0; }
-
-.ta-header-actions {
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.ta-pill {
-  border-radius:999px;
-  padding:4px 10px;
-  border:1px solid #f97316;
-  font-size:0.7rem;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:#fed7aa;
-}
-
-.ta-lock-btn {
-  border-radius:999px;
-  border:1px solid #64748b;
-  padding:4px 10px;
-  font-size:0.75rem;
-  background:#0f172a;
-  color:#e5e7eb;
-  cursor:pointer;
-}
-.ta-lock-btn:hover {
-  background:#1f2937;
-}
-
-/* Sections, forms, lists */
-.ta-section { margin-bottom:14px; }
-.ta-section-title { font-size:0.95rem; font-weight:600; margin-bottom:4px; }
-.ta-small-muted { font-size:0.75rem; color:#9ca3af; }
-
-label { font-size:0.75rem; color:#9ca3af; display:block; margin-bottom:2px; }
-
-input, select {
-  width:100%;
-  padding:6px 8px;
-  border-radius:8px;
-  border:1px solid #374151;
-  background:#020617;
-  color:#e5e7eb;
-  font-size:0.85rem;
-}
-input:focus, select:focus {
-  outline:1px solid #38bdf8;
-  border-color:#38bdf8;
-}
-
-button {
-  border-radius:999px;
-  border:none;
-  padding:6px 12px;
-  font-size:0.8rem;
-  cursor:pointer;
-  background:#4b5563;
-  color:#e5e7eb;
-}
-button:hover { background:#6b7280; }
-.ta-btn-primary { background:#22c55e; color:#022c22; font-weight:600; }
-.ta-btn-primary:hover { background:#16a34a; }
-.ta-btn-danger { background:#b91c1c; color:#fee2e2; }
-.ta-btn-danger:hover { background:#991b1b; }
-
-.ta-grid {
-  display:grid;
-  grid-template-columns:1fr;
-  gap:12px;
-}
-@media(min-width:850px){
-  .ta-grid { grid-template-columns:1fr 1fr; }
-}
-
-.ta-form-row {
-  display:flex;
-  gap:6px;
-  margin-bottom:8px;
-}
-.ta-form-row input { flex:1; }
-
-.ta-list {
-  list-style:none;
-  padding:0;
-  margin:0;
-  max-height:200px;
-  overflow-y:auto;
-  border-radius:8px;
-  border:1px solid #1f2937;
-}
-.ta-list li {
-  padding:6px 8px;
-  font-size:0.8rem;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-bottom:1px solid #1f2937;
-}
-.ta-list li:last-child { border-bottom:none; }
-.ta-list button { font-size:0.7rem; padding:4px 8px; }
-
-.ta-form-grid {
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
-}
-@media(min-width:850px){
-  .ta-form-grid {
-    grid-template-columns:repeat(3, 1fr);
-  }
-}
-
-/* Games list */
-.ta-games-list {
-  border-radius:10px;
-  border:1px solid #1f2937;
-  max-height:260px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  padding:6px;
-}
-.ta-game-row {
-  display:grid;
-  grid-template-columns:2fr 1fr 1fr;
-  gap:6px;
-  padding:6px 8px;
-  border-radius:8px;
-  background:#020617;
-  border:1px solid #111827;
-  font-size:0.8rem;
-}
-.ta-game-main { display:flex; flex-direction:column; gap:2px; }
-.ta-game-meta { color:#9ca3af; font-size:0.7rem; }
-.ta-game-teams { font-size:0.85rem; }
-.ta-game-scores {
-  display:flex;
-  align-items:center;
-  gap:4px;
-  justify-content:flex-start;
-}
-.ta-game-scores input {
-  width:42px;
-  text-align:center;
-  padding:4px 4px;
-  font-size:0.8rem;
-}
-.ta-game-actions {
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  align-items:flex-end;
-}
-
-.ta-footer {
-  margin-top:16px;
-  padding-top:10px;
-  border-top:1px solid #1f2937;
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  align-items:center;
-  justify-content:space-between;
-}
-
-/* Team penalty layout */
-.ta-team-main {
-  flex: 1;
-}
-
-.ta-team-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ta-team-meta label {
-  margin: 0;
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.ta-team-meta input {
-  width: 60px;
-  padding: 4px 6px;
-  font-size: 0.8rem;
-}
-</style>
-
-<script>
-/* ---- Password gate logic ---- */
-const ADMIN_PASSWORD = "PLAYSOCCER";
-const ADMIN_UNLOCK_KEY = "tournament_admin_unlocked_v1";
-
-function showAdminUI() {
-  document.getElementById("login-screen").style.display = "none";
-  document.getElementById("tournament-admin").style.display = "block";
-}
-
-function handleLogin() {
-  const input = document.getElementById("admin-password");
-  const error = document.getElementById("login-error");
-  const value = (input.value || "").trim();
-
-  if (!value) {
-    error.textContent = "Please enter the password.";
-    return;
-  }
-
-  if (value === ADMIN_PASSWORD) {
-    localStorage.setItem(ADMIN_UNLOCK_KEY, "true");
-    input.value = "";
-    error.textContent = "";
-    showAdminUI();
-  } else {
-    error.textContent = "Incorrect password. Please try again.";
-  }
-}
-
-function lockAdmin() {
-  localStorage.removeItem(ADMIN_UNLOCK_KEY);
-  document.getElementById("tournament-admin").style.display = "none";
-  document.getElementById("login-screen").style.display = "block";
-  document.getElementById("admin-password").value = "";
-  document.getElementById("login-error").textContent = "";
-}
-
-/* ---- Tournament data logic ---- */
-const TA_STORAGE_KEY = "tournament_manager_v1";
-
-let taState = {
-  pools: [],   // {id, name, divisionId}
-  teams: [],   // {id, name, poolId, penalty?}
-  games: []    // {id, poolId, teamAId, teamBId, dateTime, field, scoreA, scoreB}
-};
-
-const TA_DIVISIONS = [
-  { id: "14u-boys",  name: "14U Boys"  },
-  { id: "14u-girls", name: "14U Girls" },
-  { id: "12u-boys",  name: "12U Boys"  },
-  { id: "12u-girls", name: "12U Girls" },
-  { id: "10u-boys",  name: "10U Boys"  },
-  { id: "10u-girls", name: "10U Girls" }
-];
-
-function taLoadState() {
-  const raw = localStorage.getItem(TA_STORAGE_KEY);
-  if (!raw) return;
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed.pools && parsed.teams && parsed.games) {
-      taState = parsed;
+    /* ---- LOGIN ---- */
+    function showAdminUI() {
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("tournament-admin").style.display = "block";
     }
-  } catch (e) {
-    console.error("Failed to parse state", e);
-  }
-}
 
-function taSaveState() {
-  localStorage.setItem(TA_STORAGE_KEY, JSON.stringify(taState));
-}
+    function handleLogin() {
+      const input = document.getElementById("admin-password");
+      const error = document.getElementById("login-error");
+      const value = (input.value || "").trim();
 
-function taInitDivisionSelect() {
-  const sel = document.getElementById("ta-division");
-  sel.innerHTML = "";
-  TA_DIVISIONS.forEach((d, i) => {
-    const opt = document.createElement("option");
-    opt.value = d.id;
-    opt.textContent = d.name;
-    if (i === 0) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener("change", () => {
-    taRenderPools();
-    taSyncPoolSelectors();
-    taRenderTeams();
-    taRenderGames();
-  });
-}
+      if (!value) {
+        error.textContent = "Please enter the password.";
+        return;
+      }
 
-function taCurrentDivisionId() {
-  const sel = document.getElementById("ta-division");
-  return sel.value;
-}
+      if (value === ADMIN_PASSWORD) {
+        localStorage.setItem(ADMIN_UNLOCK_KEY, "true");
+        input.value = "";
+        error.textContent = "";
+        showAdminUI();
+      } else {
+        error.textContent = "Incorrect password. Please try again.";
+      }
+    }
 
-/* Pools */
-function taAddPool() {
-  const nameInput = document.getElementById("ta-pool-name");
-  const name = nameInput.value.trim();
-  if (!name) return;
-  const divisionId = taCurrentDivisionId();
-  const id = "pool-" + Date.now() + "-" + Math.random().toString(36).slice(2,7);
-  taState.pools.push({ id, name, divisionId });
-  taSaveState();
-  nameInput.value = "";
-  taRenderPools();
-  taSyncPoolSelectors();
-}
+    function lockAdmin() {
+      localStorage.removeItem(ADMIN_UNLOCK_KEY);
+      document.getElementById("tournament-admin").style.display = "none";
+      document.getElementById("login-screen").style.display = "block";
+      document.getElementById("admin-password").value = "";
+      document.getElementById("login-error").textContent = "";
+    }
 
-function taDeletePool(id) {
-  taState.games = taState.games.filter(g => g.poolId !== id);
-  taState.teams = taState.teams.filter(t => t.poolId !== id);
-  taState.pools = taState.pools.filter(p => p.id !== id);
-  taSaveState();
-  taRenderPools();
-  taSyncPoolSelectors();
-  taRenderTeams();
-  taRenderGames();
-}
+    /* ---- BACKEND STORAGE (Apps Script) ---- */
+    async function taLoadState() {
+      try {
+        const res = await fetch(API_URL + "?action=get", {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        if (data && data.pools && data.teams && data.games) {
+          taState = data;
+        } else {
+          taState = { pools: [], teams: [], games: [] };
+        }
+      } catch (err) {
+        console.error("Failed to load state from server", err);
+        taState = { pools: [], teams: [], games: [] };
+      }
+    }
 
-function taRenderPools() {
-  const ul = document.getElementById("ta-pool-list");
-  ul.innerHTML = "";
-  const divId = taCurrentDivisionId();
-  const pools = taState.pools.filter(p => p.divisionId === divId);
-  pools.forEach(p => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span>${p.name}</span>
-      <button type="button" onclick="taDeletePool('${p.id}')">Delete</button>
-    `;
-    ul.appendChild(li);
-  });
-}
+    function taSaveState() {
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(taState)
+      }).catch(err => {
+        console.error("Failed to save state to server", err);
+      });
+    }
 
-function taSyncPoolSelectors() {
-  const divId = taCurrentDivisionId();
-  const pools = taState.pools.filter(p => p.divisionId === divId);
+    /* ---- DIVISIONS ---- */
+    function taInitDivisionSelect() {
+      const sel = document.getElementById("ta-division");
+      sel.innerHTML = "";
+      TA_DIVISIONS.forEach((d, i) => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = d.name;
+        if (i === 0) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", () => {
+        taRenderPools();
+        taSyncPoolSelectors();
+        taRenderTeams();
+        taRenderGames();
+      });
+    }
 
-  const teamPoolSel = document.getElementById("ta-team-pool");
-  const gamePoolSel = document.getElementById("ta-game-pool");
+    function taCurrentDivisionId() {
+      const sel = document.getElementById("ta-division");
+      return sel.value;
+    }
 
-  [teamPoolSel, gamePoolSel].forEach(sel => {
-    sel.innerHTML = "";
-    pools.forEach((p, i) => {
-      const opt = document.createElement("option");
-      opt.value = p.id;
-      opt.textContent = p.name;
-      if (i === 0) opt.selected = true;
-      sel.appendChild(opt);
-    });
-  });
+    /* ---- POOLS ---- */
+    function taAddPool() {
+      const nameInput = document.getElementById("ta-pool-name");
+      const name = nameInput.value.trim();
+      if (!name) return;
 
-  taSyncGameTeamSelectors();
-}
+      const divisionId = taCurrentDivisionId();
+      const id = "pool-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+      taState.pools.push({ id, name, divisionId });
+      taSaveState();
+      nameInput.value = "";
+      taRenderPools();
+      taSyncPoolSelectors();
+    }
 
-/* Teams */
-function taAddTeam() {
-  const poolId = document.getElementById("ta-team-pool").value;
-  if (!poolId) return;
+    function taDeletePool(id) {
+      taState.games = taState.games.filter(g => g.poolId !== id);
+      taState.teams = taState.teams.filter(t => t.poolId !== id);
+      taState.pools = taState.pools.filter(p => p.id !== id);
+      taSaveState();
+      taRenderPools();
+      taSyncPoolSelectors();
+      taRenderTeams();
+      taRenderGames();
+    }
 
-  const nameInput = document.getElementById("ta-team-name");
-  const name = nameInput.value.trim();
-  if (!name) return;
+    function taRenderPools() {
+      const ul = document.getElementById("ta-pool-list");
+      ul.innerHTML = "";
+      const divId = taCurrentDivisionId();
+      const pools = taState.pools.filter(p => p.divisionId === divId);
 
-  const id = "team-" + Date.now() + "-" + Math.random().toString(36).slice(2,7);
-  taState.teams.push({ id, name, poolId, penalty: 0 });
-  taSaveState();
-  nameInput.value = "";
-  taRenderTeams();
-  taSyncGameTeamSelectors();
-}
+      if (pools.length === 0) {
+        const li = document.createElement("li");
+        li.className = "small-muted";
+        li.textContent = "No pools for this division yet.";
+        ul.appendChild(li);
+        return;
+      }
 
-function taDeleteTeam(id) {
-  taState.games = taState.games.filter(g => g.teamAId !== id && g.teamBId !== id);
-  taState.teams = taState.teams.filter(t => t.id !== id);
-  taSaveState();
-  taRenderTeams();
-  taRenderGames();
-  taSyncGameTeamSelectors();
-}
+      pools.forEach(p => {
+        const li = document.createElement("li");
+        li.className = "pool-item";
+        li.innerHTML = `
+          <span class="pool-name">${p.name}</span>
+          <div class="item-actions">
+            <button type="button" class="secondary" onclick="taDeletePool('${p.id}')">Delete</button>
+          </div>
+        `;
+        ul.appendChild(li);
+      });
+    }
 
-function taUpdateTeamPenalty(teamId, value) {
-  const t = taState.teams.find(t => t.id === teamId);
-  if (!t) return;
-  const num = value === "" ? 0 : Number(value);
-  if (Number.isNaN(num) || num < 0) return;
-  t.penalty = num;
-  taSaveState();
-}
+    function taSyncPoolSelectors() {
+      const divId = taCurrentDivisionId();
+      const pools = taState.pools.filter(p => p.divisionId === divId);
 
-function taRenderTeams() {
-  const ul = document.getElementById("ta-team-list");
-  ul.innerHTML = "";
-  const poolId = document.getElementById("ta-team-pool").value;
-  if (!poolId) return;
+      const teamPoolSel = document.getElementById("ta-team-pool");
+      const gamePoolSel = document.getElementById("ta-game-pool");
 
-  const teams = taState.teams.filter(t => t.poolId === poolId);
-  teams.forEach(t => {
-    const penalty = t.penalty ? Number(t.penalty) : 0;
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <div class="ta-team-main">
-        <span>${t.name}</span>
-      </div>
-      <div class="ta-team-meta">
-        <label>Penalty</label>
-        <input type="number" min="0" step="1"
-          value="${penalty}"
-          onchange="taUpdateTeamPenalty('${t.id}', this.value)" />
-        <button type="button" onclick="taDeleteTeam('${t.id}')">Delete</button>
-      </div>
-    `;
-    ul.appendChild(li);
-  });
-}
+      [teamPoolSel, gamePoolSel].forEach(sel => {
+        sel.innerHTML = "";
+        pools.forEach((p, i) => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.name;
+          if (i === 0) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      });
 
-/* Games */
-function taSyncGameTeamSelectors() {
-  const poolId = document.getElementById("ta-game-pool").value;
-  const teams = taState.teams.filter(t => t.poolId === poolId);
+      taSyncGameTeamSelectors();
+    }
 
-  const selA = document.getElementById("ta-game-teamA");
-  const selB = document.getElementById("ta-game-teamB");
-  [selA, selB].forEach(sel => {
-    sel.innerHTML = "";
-    teams.forEach((t, i) => {
-      const opt = document.createElement("option");
-      opt.value = t.id;
-      opt.textContent = t.name;
-      if (i === 0) opt.selected = true;
-      sel.appendChild(opt);
-    });
-  });
-}
+    /* ---- TEAMS ---- */
+    function taAddTeam() {
+      const poolId = document.getElementById("ta-team-pool").value;
+      if (!poolId) return;
 
-function taAddGame() {
-  const poolId = document.getElementById("ta-game-pool").value;
-  const teamAId = document.getElementById("ta-game-teamA").value;
-  const teamBId = document.getElementById("ta-game-teamB").value;
-  const dateTime = document.getElementById("ta-game-datetime").value || "";
-  const field = document.getElementById("ta-game-field").value.trim();
+      const nameInput = document.getElementById("ta-team-name");
+      const name = nameInput.value.trim();
+      if (!name) return;
 
-  if (!poolId || !teamAId || !teamBId || teamAId === teamBId) return;
+      const id = "team-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+      taState.teams.push({ id, name, poolId, penalty: 0 });
+      taSaveState();
+      nameInput.value = "";
+      taRenderTeams();
+      taSyncGameTeamSelectors();
+    }
 
-  const id = "game-" + Date.now() + "-" + Math.random().toString(36).slice(2,7);
-  taState.games.push({
-    id,
-    poolId,
-    teamAId,
-    teamBId,
-    dateTime: dateTime || null,
-    field: field || null,
-    scoreA: null,
-    scoreB: null
-  });
-  taSaveState();
+    function taDeleteTeam(id) {
+      taState.games = taState.games.filter(g => g.teamAId !== id && g.teamBId !== id);
+      taState.teams = taState.teams.filter(t => t.id !== id);
+      taSaveState();
+      taRenderTeams();
+      taRenderGames();
+      taSyncGameTeamSelectors();
+    }
 
-  // Keep date/time and field as-is so you can add multiple games with the same settings
-  taRenderGames();
-}
+    function taUpdateTeamPenalty(teamId, value) {
+      const t = taState.teams.find(t => t.id === teamId);
+      if (!t) return;
+      const num = value === "" ? 0 : Number(value);
+      if (Number.isNaN(num) || num < 0) return;
+      t.penalty = num;
+      taSaveState();
+    }
 
-function taUpdateGameScore(gameId, which, value) {
-  const g = taState.games.find(g => g.id === gameId);
-  if (!g) return;
-  const num = value === "" ? null : Number(value);
-  if (Number.isNaN(num)) return;
-  if (which === "A") g.scoreA = num;
-  if (which === "B") g.scoreB = num;
-  taSaveState();
-}
+    function taRenderTeams() {
+      const ul = document.getElementById("ta-team-list");
+      ul.innerHTML = "";
+      const poolId = document.getElementById("ta-team-pool").value;
+      if (!poolId) {
+        const li = document.createElement("li");
+        li.className = "small-muted";
+        li.textContent = "Create a pool first.";
+        ul.appendChild(li);
+        return;
+      }
 
-function taDeleteGame(id) {
-  taState.games = taState.games.filter(g => g.id !== id);
-  taSaveState();
-  taRenderGames();
-}
+      const teams = taState.teams.filter(t => t.poolId === poolId);
+      if (teams.length === 0) {
+        const li = document.createElement("li");
+        li.className = "small-muted";
+        li.textContent = "No teams in this pool yet.";
+        ul.appendChild(li);
+        return;
+      }
 
-function taRenderGames() {
-  const container = document.getElementById("ta-games-list");
-  container.innerHTML = "";
-  const poolId = document.getElementById("ta-game-pool").value;
-  if (!poolId) return;
+      teams.forEach(t => {
+        const penalty = t.penalty ? Number(t.penalty) : 0;
+        const li = document.createElement("li");
+        li.className = "team-item";
+        li.innerHTML = `
+          <span class="team-name">${t.name}</span>
+          <div class="item-actions">
+            <div class="team-penalty">
+              <span>Penalty</span>
+              <input type="number" min="0" step="1"
+                value="${penalty}"
+                onchange="taUpdateTeamPenalty('${t.id}', this.value)" />
+            </div>
+            <button type="button" class="secondary" onclick="taDeleteTeam('${t.id}')">Delete</button>
+          </div>
+        `;
+        ul.appendChild(li);
+      });
+    }
 
-  const games = taState.games.filter(g => g.poolId === poolId);
-  if (games.length === 0) {
-    const p = document.createElement("p");
-    p.textContent = "No games for this pool yet.";
-    p.className = "ta-small-muted";
-    container.appendChild(p);
-    return;
-  }
+    /* ---- GAMES ---- */
+    function taSyncGameTeamSelectors() {
+      const poolId = document.getElementById("ta-game-pool").value;
+      const teams = taState.teams.filter(t => t.poolId === poolId);
 
-  games.forEach(g => {
-    const teamA = taState.teams.find(t => t.id === g.teamAId);
-    const teamB = taState.teams.find(t => t.id === g.teamBId);
-    const pool = taState.pools.find(p => p.id === g.poolId);
+      const selA = document.getElementById("ta-game-teamA");
+      const selB = document.getElementById("ta-game-teamB");
+      [selA, selB].forEach(sel => {
+        sel.innerHTML = "";
+        teams.forEach((t, i) => {
+          const opt = document.createElement("option");
+          opt.value = t.id;
+          opt.textContent = t.name;
+          if (i === 0) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      });
+    }
 
-    const row = document.createElement("div");
-    row.className = "ta-game-row";
+    function taAddGame() {
+      const poolId = document.getElementById("ta-game-pool").value;
+      const teamAId = document.getElementById("ta-game-teamA").value;
+      const teamBId = document.getElementById("ta-game-teamB").value;
+      const dateTime = document.getElementById("ta-game-datetime").value || "";
+      const field = document.getElementById("ta-game-field").value.trim();
 
-    const dateStr = g.dateTime
-      ? new Date(g.dateTime).toLocaleString([], { dateStyle: "short", timeStyle: "short" })
-      : "";
+      if (!poolId || !teamAId || !teamBId || teamAId === teamBId) return;
 
-    row.innerHTML = `
-      <div class="ta-game-main">
-        <div class="ta-game-meta">
-          ${pool ? pool.name : "Pool"}${g.field ? " · " + g.field : ""}${dateStr ? " · " + dateStr : ""}
-        </div>
-        <div class="ta-game-teams">
-          ${(teamA && teamA.name) || "Team A"}
-          <span style="color:#6b7280;">vs</span>
-          ${(teamB && teamB.name) || "Team B"}
-        </div>
-      </div>
-      <div class="ta-game-scores">
-        <input type="number" min="0" step="1"
-          value="${g.scoreA ?? ""}"
-          onchange="taUpdateGameScore('${g.id}','A', this.value)" />
-        <span style="color:#e5e7eb;">-</span>
-        <input type="number" min="0" step="1"
-          value="${g.scoreB ?? ""}"
-          onchange="taUpdateGameScore('${g.id}','B', this.value)" />
-      </div>
-      <div class="ta-game-actions">
-        <button type="button" onclick="taDeleteGame('${g.id}')">Delete</button>
-      </div>
-    `;
-    container.appendChild(row);
-  });
-}
+      const id = "game-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+      taState.games.push({
+        id,
+        poolId,
+        teamAId,
+        teamBId,
+        dateTime: dateTime || null,
+        field: field || null,
+        scoreA: null,
+        scoreB: null
+      });
+      taSaveState();
 
-/* Clear all */
-function taClearAll() {
-  if (!confirm("This will clear all tournament data stored in this browser. Continue?")) return;
-  localStorage.removeItem(TA_STORAGE_KEY);
-  taState = { pools: [], teams: [], games: [] };
-  taRenderPools();
-  taSyncPoolSelectors();
-  taRenderTeams();
-  taRenderGames();
-}
+      // Keep date/time and field in place for quick multiple entries
+      taRenderGames();
+    }
 
-/* Init */
-function taInit() {
-  taLoadState();
-  taInitDivisionSelect();
-  taRenderPools();
-  taSyncPoolSelectors();
-  taRenderTeams();
-  taRenderGames();
+    function taUpdateGameScore(gameId, which, value) {
+      const g = taState.games.find(g => g.id === gameId);
+      if (!g) return;
+      const num = value === "" ? null : Number(value);
+      if (Number.isNaN(num)) return;
+      if (which === "A") g.scoreA = num;
+      if (which === "B") g.scoreB = num;
+      taSaveState();
+    }
 
-  document.getElementById("ta-team-pool").addEventListener("change", () => {
-    taRenderTeams();
-    taSyncGameTeamSelectors();
-  });
-  document.getElementById("ta-game-pool").addEventListener("change", () => {
-    taSyncGameTeamSelectors();
-    taRenderGames();
-  });
-}
+    function taDeleteGame(id) {
+      taState.games = taState.games.filter(g => g.id !== id);
+      taSaveState();
+      taRenderGames();
+    }
 
-/* Boot */
-(function boot() {
-  const unlocked = localStorage.getItem(ADMIN_UNLOCK_KEY) === "true";
-  if (unlocked) {
-    showAdminUI();
-  }
-  taInit();
-})();
-</script>
+    function taRenderGames() {
+      const container = document.getElementById("ta-games-list");
+      container.innerHTML = "";
+      const poolId = document.getElementById("ta-game-pool").value;
+      if (!poolId) {
+        const p = document.createElement("p");
+        p.className = "small-muted";
+        p.textContent = "Create a pool first.";
+        container.appendChild(p);
+        return;
+      }
 
+      const games = taState.games.filter(g => g.poolId === poolId);
+      if (games.length === 0) {
+        const p = document.createElement("p");
+        p.className = "small-muted";
+        p.textContent = "No games for this pool yet.";
+        container.appendChild(p);
+        return;
+      }
+
+      games.forEach(g => {
+        const teamA = taState.teams.find(t => t.id === g.teamAId);
+        const teamB = taState.teams.find(t => t.id === g.teamBId);
+        const pool = taState.pools.find(p => p.id === g.poolId);
+
+        const row = document.createElement("div");
+        row.className = "game-row";
+
+        const dateStr = g.dateTime
+          ? new Date(g.dateTime).toLocaleString([], { dateStyle: "short", timeStyle: "short" })
+          : "";
+
+        row.innerHTML = `
+          <div class="game-main">
+            <div class="game-meta">
+              ${(pool && pool.name) || "Pool"}
+              ${g.field ? " · " + g.field : ""}
+              ${dateStr ? " · " + dateStr : ""}
+            </div>
+            <div class="game-teams">
+              ${(teamA && teamA.name) || "Team A"}
+              <span style="color:#6b7280;">vs</span>
+              ${(teamB && teamB.name) || "Team B"}
+            </div>
+          </div>
+          <div class="game-scores">
+            <input type="number" min="0" step="1"
+              value="${g.scoreA ?? ""}"
+              onchange="taUpdateGameScore('${g.id}','A', this.value)" />
+            <span style="color:#e5e7eb;">-</span>
+            <input type="number" min="0" step="1"
+              value="${g.scoreB ?? ""}"
+              onchange="taUpdateGameScore('${g.id}','B', this.value)" />
+          </div>
+          <div class="game-actions">
+            <button type="button" class="secondary" onclick="taDeleteGame('${g.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    /* ---- CLEAR ALL ---- */
+    function taClearAll() {
+      if (!confirm("This will clear ALL tournament data stored in the backend (pools, teams, games) for every division. Continue?")) return;
+
+      taState = { pools: [], teams: [], games: [] };
+      taSaveState();
+      taRenderPools();
+      taSyncPoolSelectors();
+      taRenderTeams();
+      taRenderGames();
+    }
+
+    /* ---- INIT ---- */
+    async function taInit() {
+      await taLoadState();
+      taInitDivisionSelect();
+      taRenderPools();
+      taSyncPoolSelectors();
+      taRenderTeams();
+      taRenderGames();
+
+      document.getElementById("ta-team-pool").addEventListener("change", () => {
+        taRenderTeams();
+        taSyncGameTeamSelectors();
+      });
+      document.getElementById("ta-game-pool").addEventListener("change", () => {
+        taSyncGameTeamSelectors();
+        taRenderGames();
+      });
+    }
+
+    (function boot() {
+      const unlocked = localStorage.getItem(ADMIN_UNLOCK_KEY) === "true";
+      if (unlocked) {
+        showAdminUI();
+      } else {
+        document.getElementById("login-screen").style.display = "block";
+      }
+      taInit();
+    })();
+  </script>
 </body>
 </html>
