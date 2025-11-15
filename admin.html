@@ -130,7 +130,6 @@
 </div>
 
 <style>
-/* General font + colors shared */
 body {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   color: #e5e7eb;
@@ -695,9 +694,7 @@ function taAddGame() {
   });
   taSaveState();
 
-  document.getElementById("ta-game-datetime").value = "";
-  document.getElementById("ta-game-field").value = "";
-
+  // Keep date/time and field as-is so you can add multiple games with the same settings
   taRenderGames();
 }
 
