@@ -1,453 +1,282 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>AYSO Area 10W League Tournament – 14U Boys Standings</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>AYSO 10W Tournament – 14U Boys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      color-scheme: dark;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
-      color: #e5e7eb;
-    }
-
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    .page-header {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 18px;
-    }
-
-    .page-eyebrow {
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #a5b4fc;
-    }
-
-    .page-title {
-      margin: 0;
-      font-size: 1.7rem;
-      color: #fef9c3;
-    }
-
-    .page-subtitle {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #9ca3af;
-    }
-
-    .page-meta {
-      margin-top: 6px;
-      font-size: 0.75rem;
-      color: #64748b;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .pill {
-      border-radius: 999px;
-      border: 1px solid #334155;
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      color: #cbd5f5;
-      background: rgba(15, 23, 42, 0.8);
-    }
-
-    .pill--accent {
-      border-color: #22c55e;
-      color: #bbf7d0;
-    }
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 4px;
-    }
-
-    .pool-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    @media (min-width: 800px) {
-      .pool-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .pool-card {
-      border-radius: 14px;
-      border: 1px solid #1f2937;
-      background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.16), transparent 60%),
-        #020617;
-      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5);
-      padding: 12px 12px 14px;
-    }
-
-    .pool-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 8px;
-      gap: 8px;
-    }
-
-    .pool-header h3 {
-      margin: 0;
-      font-size: 1rem;
-      color: #e5e7eb;
-    }
-
-    .pool-tag {
-      font-size: 0.7rem;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .standings-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-
-    .standings-table thead {
-      background: rgba(15, 23, 42, 0.95);
-    }
-
-    .standings-table th,
-    .standings-table td {
-      padding: 4px 6px;
-      text-align: center;
-      border-bottom: 1px solid #1f2937;
-      white-space: nowrap;
-    }
-
-    .standings-table th {
-      font-weight: 600;
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
-
-    .standings-table td:first-child,
-    .standings-table th:first-child {
-      text-align: right;
-      padding-right: 8px;
-    }
-
-    .standings-table td:nth-child(2),
-    .standings-table th:nth-child(2) {
-      text-align: left;
-      padding-left: 6px;
-      max-width: 180px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .standings-table tbody tr:nth-child(1) td {
-      background: linear-gradient(to right, rgba(34, 197, 94, 0.1), transparent);
-    }
-
-    .standings-table tbody tr:nth-child(2) td {
-      background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent);
-    }
-
-    .standings-table tbody tr:nth-child(3) td {
-      background: linear-gradient(to right, rgba(234, 179, 8, 0.06), transparent);
-    }
-
-    .empty-text {
-      margin: 4px 0 0;
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-
-    .footer-note {
-      margin-top: 12px;
-      font-size: 0.7rem;
-      color: #6b7280;
-    }
-
-    .loading {
-      font-size: 0.85rem;
-      color: #9ca3af;
-    }
-
-    .error {
-      font-size: 0.85rem;
-      color: #fecaca;
-      background: rgba(127, 29, 29, 0.4);
-      border-radius: 10px;
-      padding: 8px 10px;
-      border: 1px solid #7f1d1d;
-      margin-top: 8px;
+    body { background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%); }
+    .glass {
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(148,163,184,0.25);
     }
   </style>
 </head>
-<body>
-  <div class="page">
-    <header class="page-header">
-      <div class="page-eyebrow">AYSO Area 10W League Tournament</div>
-      <h1 class="page-title">14U Boys – Pool Standings</h1>
-      <p class="page-subtitle">
-        Live standings update as scores are entered by tournament staff.
+<body class="min-h-screen text-slate-100">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <header class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold tracking-tight">
+        AYSO Area 10W League Tournament – 14U Boys
+      </h1>
+      <p class="text-sm text-slate-300 mt-1">
+        Live standings and results. Refresh the page to see the latest updates from the admin system.
       </p>
-      <div class="pill-row">
-        <span class="pill pill--accent">Division: 14U Boys</span>
-        <span class="pill">Win: 6 pts</span>
-        <span class="pill">Tie: 3 pts</span>
-        <span class="pill">Goals: 1 pt (max 3)</span>
-        <span class="pill">Shutout: +1 pt</span>
-        <span class="pill">Penalties: subtracted</span>
-      </div>
-      <div class="page-meta">
-        For schedule &amp; scores entry, tournament staff use the admin page.
-      </div>
+      <p class="mt-2 text-xs text-slate-400">
+        Scoring: Win 6 pts, Tie 3 pts, Loss 0 pts, +1 pt per goal (max 3 per game), +1 pt shutout bonus,
+        minus any posted deductions.
+      </p>
     </header>
 
-    <main class="content">
-      <div id="status" class="loading">Loading standings…</div>
-      <div id="pools-container" class="pool-grid"></div>
-
-      <p class="footer-note">
-        Standings are calculated based on posted scores. For questions about scores or tiebreakers,
-        please check with the tournament director.
-      </p>
+    <main id="content" class="space-y-6">
+      <p class="text-sm text-slate-300">Loading…</p>
     </main>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzxMdFv4Ztw-4ZoXI-m-AJGKK2ops8ZBs-uhLLVpecEeMy628wnn5vssVC17Z87kTfLow/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxqNaECXvHMOWuecTtPNyMLx-ruXWum7Rofcj7pm4L8wWEKCKsQV7GM7xFhqhrzk4CX6A/exec";
     const DIVISION_ID = "14u-boys";
+    const DIVISION_LABEL = "14U Boys";
 
-    // Scoring rules:
-    // Win: 6 pts
-    // Tie: 3 pts
-    // Loss: 0 pts
-    // Goals: 1 pt per goal, max 3 per game
-    // Shutout bonus: 1 pt if opponent scores 0
-    // Penalties: subtract penalty value from total
-    function computeStandingsForPool(poolId, state) {
-      const teams = state.teams.filter(t => t.poolId === poolId);
-      const games = state.games.filter(g => g.poolId === poolId);
+    function computeStandings(state) {
+      const pools = state.pools.filter(p => p.divisionId === DIVISION_ID);
+      const teams = state.teams.filter(t => t.divisionId === DIVISION_ID);
+      const games = state.games.filter(g => g.divisionId === DIVISION_ID);
 
-      const table = new Map();
+      const byPool = {};
+      pools.forEach(p => byPool[p.id] = { pool: p, teams: [], games: [] });
+
       teams.forEach(t => {
-        table.set(t.id, {
-          teamId: t.id,
-          name: t.name,
+        if (!byPool[t.poolId]) return;
+        byPool[t.poolId].teams.push({
+          id: t.id,
+          name: t.name || "Unnamed",
+          deductions: t.deductions || 0,
           played: 0,
           wins: 0,
-          draws: 0,
+          ties: 0,
           losses: 0,
           gf: 0,
           ga: 0,
-          ptsRaw: 0,
-          penalty: t.penalty ? Number(t.penalty) : 0,
-          ptsTotal: 0,
-          gd: 0
+          shutouts: 0,
+          points: 0
         });
       });
 
       games.forEach(g => {
-        const hasScores = g.scoreA != null && g.scoreB != null;
-        if (!hasScores) return;
+        if (!byPool[g.poolId]) return;
+        byPool[g.poolId].games.push(g);
 
-        const teamA = table.get(g.teamAId);
-        const teamB = table.get(g.teamBId);
-        if (!teamA || !teamB) return;
+        if (g.homeGoals == null || g.awayGoals == null || isNaN(g.homeGoals) || isNaN(g.awayGoals)) return;
 
-        const a = Number(g.scoreA);
-        const b = Number(g.scoreB);
-        if (Number.isNaN(a) || Number.isNaN(b)) return;
+        const home = byPool[g.poolId].teams.find(t => t.id === g.homeTeamId);
+        const away = byPool[g.poolId].teams.find(t => t.id === g.awayTeamId);
+        if (!home || !away) return;
 
-        teamA.played++;
-        teamB.played++;
-        teamA.gf += a;
-        teamA.ga += b;
-        teamB.gf += b;
-        teamB.ga += a;
+        const hg = Number(g.homeGoals);
+        const ag = Number(g.awayGoals);
 
-        // Result points
-        if (a > b) {
-          teamA.wins++;
-          teamB.losses++;
-          teamA.ptsRaw += 6;
-        } else if (a < b) {
-          teamB.wins++;
-          teamA.losses++;
-          teamB.ptsRaw += 6;
+        home.played++; away.played++;
+        home.gf += hg; home.ga += ag;
+        away.gf += ag; away.ga += hg;
+
+        if (hg > ag) {
+          home.wins++; away.losses++;
+          home.points += 6;
+        } else if (hg < ag) {
+          away.wins++; home.losses++;
+          away.points += 6;
         } else {
-          teamA.draws++;
-          teamB.draws++;
-          teamA.ptsRaw += 3;
-          teamB.ptsRaw += 3;
+          home.ties++; away.ties++;
+          home.points += 3;
+          away.points += 3;
         }
 
-        // Goals-for bonus (max 3 per game)
-        teamA.ptsRaw += Math.min(a, 3);
-        teamB.ptsRaw += Math.min(b, 3);
+        home.points += Math.min(hg, 3);
+        away.points += Math.min(ag, 3);
 
-        // Shutout bonus
-        if (b === 0 && a > 0) teamA.ptsRaw += 1;
-        if (a === 0 && b > 0) teamB.ptsRaw += 1;
+        if (ag === 0) { home.shutouts++; home.points += 1; }
+        if (hg === 0) { away.shutouts++; away.points += 1; }
       });
 
-      const rows = Array.from(table.values()).map(row => {
-        row.gd = row.gf - row.ga;
-        row.ptsTotal = row.ptsRaw - row.penalty;
-        return row;
-      });
-
-      rows.sort((a, b) => {
-        if (b.ptsTotal !== a.ptsTotal) return b.ptsTotal - a.ptsTotal;
-        if (b.gd !== a.gd) return b.gd - a.gd;
-        if (b.gf !== a.gf) return b.gf - a.gf;
-        return a.name.localeCompare(b.name);
-      });
-
-      return rows;
-    }
-
-    async function loadStateFromServer() {
-      try {
-        const res = await fetch(API_URL + "?action=get", {
-          method: "GET",
-          headers: { "Accept": "application/json" }
+      Object.values(byPool).forEach(entry => {
+        entry.teams.forEach(t => { if (t.deductions) t.points -= t.deductions; });
+        entry.teams.sort((a, b) => {
+          if (b.points !== a.points) return b.points - a.points;
+          const gdA = a.gf - a.ga;
+          const gdB = b.gf - b.ga;
+          if (gdB !== gdA) return gdB - gdA;
+          if (b.gf !== a.gf) return b.gf - a.gf;
+          return a.name.localeCompare(b.name);
         });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-        if (data && data.pools && data.teams && data.games) {
-          return data;
-        }
-      } catch (err) {
-        console.error("Failed to load state from server", err);
-        const statusEl = document.getElementById("status");
-        statusEl.className = "error";
-        statusEl.textContent = "Unable to load standings. Please try refreshing the page.";
-      }
-      return { pools: [], teams: [], games: [] };
-    }
-
-    function createPoolCard(pool, standings) {
-      const card = document.createElement("div");
-      card.className = "pool-card";
-
-      const header = document.createElement("div");
-      header.className = "pool-header";
-      header.innerHTML = `
-        <div>
-          <h3>${pool.name}</h3>
-          <div class="pool-tag">Pool Standings</div>
-        </div>
-      `;
-      card.appendChild(header);
-
-      if (standings.length === 0) {
-        const p = document.createElement("p");
-        p.className = "empty-text";
-        p.textContent = "No results yet for this pool.";
-        card.appendChild(p);
-        return card;
-      }
-
-      const table = document.createElement("table");
-      table.className = "standings-table";
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Team</th>
-            <th>GP</th>
-            <th>W</th>
-            <th>T</th>
-            <th>L</th>
-            <th>GF</th>
-            <th>GA</th>
-            <th>GD</th>
-            <th>Pts</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      `;
-      const tbody = table.querySelector("tbody");
-
-      standings.forEach((row, index) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td title="${row.name}">${row.name}</td>
-          <td>${row.played}</td>
-          <td>${row.wins}</td>
-          <td>${row.draws}</td>
-          <td>${row.losses}</td>
-          <td>${row.gf}</td>
-          <td>${row.ga}</td>
-          <td>${row.gd}</td>
-          <td>${row.ptsTotal}</td>
-        `;
-        tbody.appendChild(tr);
       });
 
-      card.appendChild(table);
-      return card;
+      return byPool;
     }
 
-    async function renderDivision() {
-      const statusEl = document.getElementById("status");
-      const container = document.getElementById("pools-container");
-      statusEl.textContent = "Loading standings…";
-      statusEl.className = "loading";
-      container.innerHTML = "";
-
-      const state = await loadStateFromServer();
+    function render(state) {
+      const container = document.getElementById("content");
       const pools = state.pools.filter(p => p.divisionId === DIVISION_ID);
 
       if (pools.length === 0) {
-        statusEl.textContent = "";
-        const p = document.createElement("p");
-        p.className = "empty-text";
-        p.textContent = "No pools have been created yet for this division.";
-        container.appendChild(p);
+        container.innerHTML = `<p class="text-sm text-slate-300">No pools have been entered yet for this division.</p>`;
         return;
       }
 
-      statusEl.textContent = "";
+      const byPool = computeStandings(state);
+      container.innerHTML = "";
+
       pools.forEach(pool => {
-        const standings = computeStandingsForPool(pool.id, state);
-        const card = createPoolCard(pool, standings);
-        container.appendChild(card);
+        const entry = byPool[pool.id];
+        const teams = entry ? entry.teams : [];
+        const games = entry ? entry.games : [];
+
+        const section = document.createElement("section");
+        section.className = "glass rounded-2xl p-4 space-y-4";
+
+        const h2 = document.createElement("h2");
+        h2.className = "text-lg font-semibold mb-1";
+        h2.textContent = pool.name || "Pool";
+        section.appendChild(h2);
+
+        const standingsDiv = document.createElement("div");
+        standingsDiv.innerHTML = `
+          <h3 class="text-sm font-semibold mb-2 text-slate-200">Standings</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-xs border border-slate-700/60">
+              <thead class="bg-slate-900/80 text-slate-300">
+                <tr>
+                  <th class="px-2 py-1 text-left">#</th>
+                  <th class="px-2 py-1 text-left">Team</th>
+                  <th class="px-2 py-1">P</th>
+                  <th class="px-2 py-1">W</th>
+                  <th class="px-2 py-1">T</th>
+                  <th class="px-2 py-1">L</th>
+                  <th class="px-2 py-1">GF</th>
+                  <th class="px-2 py-1">GA</th>
+                  <th class="px-2 py-1">GD</th>
+                  <th class="px-2 py-1">SO</th>
+                  <th class="px-2 py-1">Ded</th>
+                  <th class="px-2 py-1">Pts</th>
+                </tr>
+              </thead>
+              <tbody id="body-${pool.id}"></tbody>
+            </table>
+          </div>
+        `;
+        section.appendChild(standingsDiv);
+
+        const tbody = standingsDiv.querySelector(`#body-${pool.id}`);
+
+        if (teams.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="12" class="px-2 py-2 text-center text-slate-400">
+            No teams entered yet for this pool.
+          </td>`;
+          tbody.appendChild(tr);
+        } else {
+          teams.forEach((t, index) => {
+            const gd = t.gf - t.ga;
+            const tr = document.createElement("tr");
+            tr.className = index % 2 === 0 ? "bg-slate-900/40" : "bg-slate-900/10";
+            tr.innerHTML = `
+              <td class="px-2 py-1 text-center">${index + 1}</td>
+              <td class="px-2 py-1">${t.name}</td>
+              <td class="px-2 py-1 text-center">${t.played}</td>
+              <td class="px-2 py-1 text-center">${t.wins}</td>
+              <td class="px-2 py-1 text-center">${t.ties}</td>
+              <td class="px-2 py-1 text-center">${t.losses}</td>
+              <td class="px-2 py-1 text-center">${t.gf}</td>
+              <td class="px-2 py-1 text-center">${t.ga}</td>
+              <td class="px-2 py-1 text-center">${gd}</td>
+              <td class="px-2 py-1 text-center">${t.shutouts}</td>
+              <td class="px-2 py-1 text-center">${t.deductions || 0}</td>
+              <td class="px-2 py-1 text-center font-semibold">${t.points}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        const gamesDiv = document.createElement("div");
+        gamesDiv.innerHTML = `
+          <h3 class="text-sm font-semibold mb-2 text-slate-200">Games</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-xs border border-slate-700/60">
+              <thead class="bg-slate-900/80 text-slate-300">
+                <tr>
+                  <th class="px-2 py-1 text-left">Date</th>
+                  <th class="px-2 py-1 text-left">Time</th>
+                  <th class="px-2 py-1 text-left">Field</th>
+                  <th class="px-2 py-1 text-left">Home</th>
+                  <th class="px-2 py-1 text-left">Away</th>
+                  <th class="px-2 py-1 text-center">Score</th>
+                </tr>
+              </thead>
+              <tbody id="games-${pool.id}"></tbody>
+            </table>
+          </div>
+        `;
+        section.appendChild(gamesDiv);
+
+        const gbody = gamesDiv.querySelector(`#games-${pool.id}`);
+        const teamMap = {};
+        teams.forEach(t => teamMap[t.id] = t.name);
+
+        if (games.length === 0) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="6" class="px-2 py-2 text-center text-slate-400">
+            No games entered yet for this pool.
+          </td>`;
+          gbody.appendChild(tr);
+        } else {
+          const sortedGames = [...games].sort((a, b) => {
+            const dA = (a.date || "") + " " + (a.time || "");
+            const dB = (b.date || "") + " " + (b.time || "");
+            return dA.localeCompare(dB);
+          });
+
+          sortedGames.forEach(g => {
+            const home = teamMap[g.homeTeamId] || "TBD";
+            const away = teamMap[g.awayTeamId] || "TBD";
+            let score = "vs";
+            if (g.homeGoals != null && g.awayGoals != null &&
+                !isNaN(g.homeGoals) && !isNaN(g.awayGoals)) {
+              score = `${g.homeGoals} - ${g.awayGoals}`;
+            }
+            const tr = document.createElement("tr");
+            tr.className = "bg-slate-900/20";
+            tr.innerHTML = `
+              <td class="px-2 py-1">${g.date || ""}</td>
+              <td class="px-2 py-1">${g.time || ""}</td>
+              <td class="px-2 py-1">${g.field || ""}</td>
+              <td class="px-2 py-1">${home}</td>
+              <td class="px-2 py-1">${away}</td>
+              <td class="px-2 py-1 text-center">${score}</td>
+            `;
+            gbody.appendChild(tr);
+          });
+        }
+
+        container.appendChild(section);
       });
     }
 
-    renderDivision().catch(err => console.error(err));
+    async function init() {
+      const container = document.getElementById("content");
+      try {
+        container.innerHTML = `<p class="text-sm text-slate-300">Loading…</p>`;
+        const res = await fetch(API_URL + "?t=" + Date.now());
+        const state = await res.json();
+        render(state);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML =
+          `<p class="text-sm text-rose-400">Error loading data. Please try again later.</p>`;
+      }
+    }
+
+    init();
   </script>
 </body>
 </html>
