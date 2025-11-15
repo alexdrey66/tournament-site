@@ -2,237 +2,318 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AYSO Tournament – 14U Girls</title>
+  <title>AYSO Area 10W – 14U Girls Standings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #0f172a;
+      --border-card: #1e293b;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent-yellow: #fef08a;
+      --accent-blue: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pool-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-card);
+      padding: 16px 14px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .pool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .pool-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .pool-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-blue);
+    }
+
+    .empty-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 6px 0 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead {
+      background: #020617;
+    }
+
+    th, td {
+      padding: 6px 4px;
+      text-align: center;
+      border-bottom: 1px solid #1f2933;
+    }
+
+    th {
+      font-weight: 600;
+      color: #cbd5f5;
+      font-size: 0.75rem;
+    }
+
+    td.team-name {
+      text-align: left;
+      padding-left: 6px;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: left;
+    }
+  </style>
 </head>
-<body style="margin:0; background:#020617;">
+<body>
+<div class="page">
+  <header>
+    <h1>14U Girls Standings</h1>
+    <p>Live pool standings, using tournament points and penalties.</p>
+  </header>
 
-<!-- BEGIN 14U GIRLS PUBLIC VIEW CODE -->
-<div id="division-standings">
-  <div class="ds-page">
-    <div class="ds-card">
-      <div class="ds-header">
-        <div>
-          <h1 id="ds-divisionTitle"></h1>
-          <p class="ds-muted">Live pool standings and match results.</p>
-        </div>
-        <span class="ds-pill">Public View</span>
-      </div>
+  <div id="pools-container"></div>
 
-      <div class="ds-layout">
-        <div>
-          <div class="ds-section-title">Select Pool</div>
-          <label for="ds-poolSelect">Pool</label>
-          <select id="ds-poolSelect" onchange="dsOnPoolChange()"></select>
-          <p class="ds-small-muted">
-            Points: <span class="ds-highlight">Win +6 • Tie +3 • Loss +0 • +1 per goal (max 3)</span>
-          </p>
-        </div>
-
-        <div>
-          <div class="ds-section-title">Standings</div>
-          <div class="ds-table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th><th>Team</th>
-                  <th class="text-center">GP</th>
-                  <th class="text-center">W</th>
-                  <th class="text-center">T</th>
-                  <th class="text-center">L</th>
-                  <th class="text-center">GF</th>
-                  <th class="text-center">GA</th>
-                  <th class="text-center">GD</th>
-                  <th class="text-center">PTS</th>
-                </tr>
-              </thead>
-              <tbody id="ds-standingsBody"></tbody>
-            </table>
-          </div>
-          <p id="ds-noTeamsMsg" class="ds-small-muted" style="display:none;">No teams yet.</p>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;">
-        <div class="ds-section-title">Games</div>
-        <div id="ds-gamesList" class="ds-games-list"></div>
-        <p id="ds-noGamesMsg" class="ds-small-muted" style="display:none;">No games yet.</p>
-      </div>
-
-    </div>
-  </div>
+  <p class="footer-note">
+    Scoring: Win = 6 pts, Tie = 3 pts, Loss = 0 pts, Goals = 1 pt per goal (max 3 per game),
+    Shutout bonus = 1 pt, Penalties are subtracted from total points.
+  </p>
 </div>
 
-<style>
-#division-standings * { box-sizing:border-box; }
-#division-standings { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
-#division-standings .ds-page { max-width:900px; margin:0 auto; padding:16px; }
-#division-standings .ds-card {
-  background:#020617; border-radius:12px; border:1px solid #1f2937;
-  padding:14px; box-shadow:0 18px 36px rgba(0,0,0,0.45); color:#e5e7eb;
-}
-#division-standings table { width:100%; border-collapse:collapse; font-size:0.8rem; }
-#division-standings th, #division-standings td {
-  padding:6px 8px; border-bottom:1px solid #1f2937; white-space:nowrap;
-}
-.text-center { text-align:center; }
-.ds-highlight { color:#facc15; font-weight:600; }
-.ds-small-muted { font-size:0.75rem;color:#9ca3af; }
-.ds-games-list { max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
-.ds-game-row {
-  display:flex; justify-content:space-between; padding:6px 8px;
-  border-radius:10px; border:1px solid #1f2937; background:#020617;
-}
-.ds-pill {
-  border-radius:999px; padding:3px 10px; border:1px solid #38bdf8;
-  font-size:0.7rem; color:#7dd3fc;
-}
-.ds-layout { display:grid; grid-template-columns:1fr; gap:12px; }
-@media(min-width:800px){ .ds-layout { grid-template-columns:1fr 1.4fr; } }
-</style>
-
 <script>
-const DS_STORAGE_KEY = "tournament_manager_v1";
-const CURRENT_DIVISION_ID = "14u-girls";
-const DIVISION_NAME = "14U Girls";
+const TA_STORAGE_KEY = "tournament_manager_v1";
+const DIVISION_ID = "14u-girls";
 
-let dsState = { pools: [], teams: [], games: [] };
+const WIN_POINTS = 6;
+const TIE_POINTS = 3;
+const LOSS_POINTS = 0;
+const GOAL_POINT_PER = 1;
+const GOAL_POINT_MAX = 3;
+const SHUTOUT_BONUS = 1;
 
-function dsLoadState() {
-  const raw = localStorage.getItem(DS_STORAGE_KEY);
-  if (!raw) return;
+function loadState() {
+  const raw = localStorage.getItem(TA_STORAGE_KEY);
+  if (!raw) return { pools: [], teams: [], games: [] };
   try {
-    const parsed = JSON.parse(raw);
-    if (parsed.pools && parsed.teams && parsed.games) dsState = parsed;
-  } catch(e){}
+    return JSON.parse(raw);
+  } catch {
+    return { pools: [], teams: [], games: [] };
+  }
 }
 
-function dsComputeStandings(poolId) {
-  const teams = dsState.teams.filter(t => t.poolId === poolId);
-  const games = dsState.games.filter(g => g.poolId === poolId);
+function computeStandingsForPool(poolId, state) {
+  const teams = state.teams.filter(t => t.poolId === poolId);
+  const games = state.games.filter(g => g.poolId === poolId);
 
-  const stats = {};
-  teams.forEach(t => stats[t.id] = {
-    name:t.name, played:0, wins:0, draws:0, losses:0, gf:0, ga:0, gd:0, points:0
+  const records = {};
+  teams.forEach(t => {
+    const penalty = t.penalty ? Number(t.penalty) : 0;
+    records[t.id] = {
+      teamId: t.id,
+      name: t.name,
+      played: 0,
+      won: 0,
+      drawn: 0,
+      lost: 0,
+      gf: 0,
+      ga: 0,
+      gd: 0,
+      rawPoints: 0,
+      penalty: Number.isFinite(penalty) ? penalty : 0,
+      points: 0
+    };
   });
 
   games.forEach(g => {
-    if (g.scoreA == null || g.scoreB == null) return;
+    const { teamAId, teamBId, scoreA, scoreB } = g;
+    if (scoreA == null || scoreB == null) return;
 
-    const A = stats[g.teamAId]; const B = stats[g.teamBId];
-    if (!A || !B) return;
+    const recA = records[teamAId];
+    const recB = records[teamBId];
+    if (!recA || !recB) return;
 
-    A.played++; B.played++;
-    A.gf+=g.scoreA; A.ga+=g.scoreB;
-    B.gf+=g.scoreB; B.ga+=g.scoreA;
+    recA.played += 1;
+    recB.played += 1;
 
-    A.gd = A.gf - A.ga;
-    B.gd = B.gf - B.ga;
+    recA.gf += scoreA;
+    recA.ga += scoreB;
+    recB.gf += scoreB;
+    recB.ga += scoreA;
 
-    if (g.scoreA > g.scoreB){ A.wins++; B.losses++; A.points+=6; }
-    else if (g.scoreB > g.scoreA){ B.wins++; A.losses++; B.points+=6; }
-    else { A.draws++; B.draws++; A.points+=3; B.points+=3; }
+    recA.gd = recA.gf - recA.ga;
+    recB.gd = recB.gf - recB.ga;
 
-    A.points += Math.min(g.scoreA,3);
-    B.points += Math.min(g.scoreB,3);
+    if (scoreA > scoreB) {
+      recA.won += 1;
+      recB.lost += 1;
+      recA.rawPoints += WIN_POINTS;
+      recB.rawPoints += LOSS_POINTS;
+    } else if (scoreA < scoreB) {
+      recB.won += 1;
+      recA.lost += 1;
+      recB.rawPoints += WIN_POINTS;
+      recA.rawPoints += LOSS_POINTS;
+    } else {
+      recA.drawn += 1;
+      recB.drawn += 1;
+      recA.rawPoints += TIE_POINTS;
+      recB.rawPoints += TIE_POINTS;
+    }
+
+    recA.rawPoints += Math.min(scoreA * GOAL_POINT_PER, GOAL_POINT_MAX);
+    recB.rawPoints += Math.min(scoreB * GOAL_POINT_PER, GOAL_POINT_MAX);
+
+    if (scoreB === 0) recA.rawPoints += SHUTOUT_BONUS;
+    if (scoreA === 0) recB.rawPoints += SHUTOUT_BONUS;
   });
 
-  return Object.values(stats).sort((a,b)=>
-    b.points - a.points || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
-  );
-}
-
-function dsRenderPools() {
-  const sel = document.getElementById("ds-poolSelect");
-  const pools = dsState.pools.filter(p => p.divisionId === CURRENT_DIVISION_ID);
-
-  sel.innerHTML = "";
-  pools.forEach((p,i)=>{
-    const opt=document.createElement("option");
-    opt.value=p.id; opt.textContent=p.name;
-    if(i===0) opt.selected = true;
-    sel.appendChild(opt);
+  Object.values(records).forEach(r => {
+    r.points = r.rawPoints - r.penalty;
   });
 
-  if (pools.length === 0) return;
-
-  dsOnPoolChange();
+  return Object.values(records).sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.gd !== a.gd) return b.gd - a.gd;
+    if (b.gf !== a.gf) return b.gf - a.gf;
+    return a.name.localeCompare(b.name);
+  });
 }
 
-function dsOnPoolChange() {
-  const poolId = document.getElementById("ds-poolSelect").value;
-  if (!poolId) return;
-  dsRenderStandings(poolId);
-  dsRenderGames(poolId);
-}
+function renderDivision() {
+  const state = loadState();
+  const container = document.getElementById("pools-container");
+  container.innerHTML = "";
 
-function dsRenderStandings(poolId) {
-  const tbody = document.getElementById("ds-standingsBody");
-  tbody.innerHTML = "";
+  const pools = state.pools.filter(p => p.divisionId === DIVISION_ID);
 
-  const teams = dsState.teams.filter(t=>t.poolId===poolId);
-  if (teams.length===0){
-    document.getElementById("ds-noTeamsMsg").style.display="block";
+  if (pools.length === 0) {
+    const p = document.createElement("p");
+    p.className = "empty-text";
+    p.textContent = "No pools have been created yet for this division.";
+    container.appendChild(p);
     return;
   }
 
-  const standings = dsComputeStandings(poolId);
-  standings.forEach((t,i)=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i+1}</td><td>${t.name}</td>
-      <td class="text-center">${t.played}</td>
-      <td class="text-center">${t.wins}</td>
-      <td class="text-center">${t.draws}</td>
-      <td class="text-center">${t.losses}</td>
-      <td class="text-center">${t.gf}</td>
-      <td class="text-center">${t.ga}</td>
-      <td class="text-center">${t.gd}</td>
-      <td class="text-center ds-highlight">${t.points}</td>
+  pools.forEach(pool => {
+    const standings = computeStandingsForPool(pool.id, state);
+
+    const card = document.createElement("div");
+    card.className = "pool-card";
+
+    const header = document.createElement("div");
+    header.className = "pool-header";
+    header.innerHTML = `
+      <div class="pool-name">${pool.name}</div>
+      <div class="pool-tag">Division: 14U Girls</div>
     `;
-    tbody.appendChild(tr);
+    card.appendChild(header);
+
+    if (standings.length === 0) {
+      const p = document.createElement("p");
+      p.className = "empty-text";
+      p.textContent = "No teams have been added to this pool yet.";
+      card.appendChild(p);
+    } else {
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>#</th>
+            <th style="text-align:left;padding-left:6px;">Team</th>
+            <th>GP</th>
+            <th>W</th>
+            <th>T</th>
+            <th>L</th>
+            <th>GF</th>
+            <th>GA</th>
+            <th>GD</th>
+            <th>Pts</th>
+            <th>Pen</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${standings.map((r, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td class="team-name">${r.name}</td>
+              <td>${r.played}</td>
+              <td>${r.won}</td>
+              <td>${r.drawn}</td>
+              <td>${r.lost}</td>
+              <td>${r.gf}</td>
+              <td>${r.ga}</td>
+              <td>${r.gd}</td>
+              <td>${r.points}</td>
+              <td>${r.penalty}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      `;
+      card.appendChild(table);
+    }
+
+    container.appendChild(card);
   });
 }
 
-function dsRenderGames(poolId) {
-  const list=document.getElementById("ds-gamesList");
-  list.innerHTML="";
-
-  const games = dsState.games.filter(g=>g.poolId===poolId);
-
-  if (games.length===0){
-    document.getElementById("ds-noGamesMsg").style.display="block";
-    return;
-  }
-
-  games.forEach(g=>{
-    const A = dsState.teams.find(t=>t.id===g.teamAId);
-    const B = dsState.teams.find(t=>t.id===g.teamBId);
-
-    const row=document.createElement("div");
-    row.className="ds-game-row";
-    const hasScores = g.scoreA != null && g.scoreB != null;
-    row.innerHTML = `
-      <div class="ds-game-main">
-        <div class="ds-game-teams">${A?.name||"Team A"} vs ${B?.name||"Team B"}</div>
-      </div>
-      <div class="ds-game-right">
-        ${hasScores ? `<span class="ds-highlight">${g.scoreA} - ${g.scoreB}</span>` : `<span>vs</span>`}
-      </div>
-    `;
-    list.appendChild(row);
-  });
-}
-
-function dsInit(){
-  document.getElementById("ds-divisionTitle").textContent = DIVISION_NAME;
-  dsLoadState();
-  dsRenderPools();
-}
-dsInit();
+renderDivision();
 </script>
-
-<!-- END 14U GIRLS -->
-
 </body>
 </html>
