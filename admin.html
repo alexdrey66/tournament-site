@@ -135,6 +135,7 @@
       <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 4: Games & Scores</h2>
 
+        <!-- Top: controls & add game -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
           <div>
             <label class="block mb-1">Pool</label>
@@ -157,14 +158,20 @@
           </div>
         </div>
 
-        <div id="gameList" class="space-y-3 mb-3"></div>
-
         <button id="addGameBtn"
-          class="text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold">
+          class="mb-4 text-xs bg-sky-500 hover:bg-sky-400 px-3 py-1.5 rounded-md font-semibold">
           + Add Game
         </button>
 
-        <p class="mt-3 text-[11px] text-slate-400">
+        <!-- Schedule editor -->
+        <h3 class="text-xs font-semibold mb-2 text-slate-200">Schedule / Edit Games</h3>
+        <div id="gameList" class="space-y-3 mb-4"></div>
+
+        <!-- Score editor -->
+        <h3 class="text-xs font-semibold mb-2 text-slate-200">Enter / Update Scores</h3>
+        <div id="scoreList" class="space-y-2"></div>
+
+        <p class="mt-4 text-[11px] text-slate-400">
           Scoring: Win 6 pts, Tie 3 pts, Loss 0 pts, +1 pt per goal (max 3 per game),
           +1 pt shutout bonus, minus any deductions.
         </p>
@@ -179,7 +186,7 @@
     let state = { pools: [], teams: [], games: [] };
     let currentDivision = "14u-boys";
 
-    // Track last selected pools so we don't jump back to the first one
+    // Remember pool selections so we don't keep jumping to the first one
     let lastTeamPoolId = null;
     let lastGamePoolId = null;
 
@@ -209,6 +216,7 @@
     const gamePoolSelect = document.getElementById("gamePoolSelect");
     const teamListEl = document.getElementById("teamList");
     const gameListEl = document.getElementById("gameList");
+    const scoreListEl = document.getElementById("scoreList");
     const defaultDateEl = document.getElementById("defaultDate");
     const defaultTimeEl = document.getElementById("defaultTime");
     const defaultFieldEl = document.getElementById("defaultField");
@@ -334,7 +342,6 @@
     function populatePoolSelects() {
       const pools = getDivisionPools();
 
-      // Remember current values before wiping options
       const prevTeamPool = lastTeamPoolId || teamPoolSelect.value;
       const prevGamePool = lastGamePoolId || gamePoolSelect.value;
 
@@ -348,7 +355,6 @@
         });
       });
 
-      // Try to keep previous selections if still valid, otherwise fall back to first pool
       const firstPoolId = pools[0] ? pools[0].id : "";
 
       const newTeamPool = pools.some(p => p.id === prevTeamPool) ? prevTeamPool : firstPoolId;
@@ -447,7 +453,7 @@
       renderAll();
     });
 
-    // Games (cards layout, responsive, bigger scores)
+    // Games – schedule editor (date/time/field/teams)
     function renderGames() {
       const pools = getDivisionPools();
       const teams = getDivisionTeams();
@@ -457,24 +463,27 @@
 
       if (pools.length === 0) {
         gameListEl.innerHTML = `<p class="text-xs text-slate-400">Create a pool first.</p>`;
+        scoreListEl.innerHTML = "";
         return;
       }
 
       if (!selectedPoolId) {
         gameListEl.innerHTML = "";
+        scoreListEl.innerHTML = "";
         return;
       }
 
       const poolTeams = teams.filter(t => t.poolId === selectedPoolId);
       const games = getDivisionGames().filter(g => g.poolId === selectedPoolId);
 
+      // Schedule cards
       gameListEl.innerHTML = "";
 
       games.forEach(game => {
         const card = document.createElement("div");
         card.className = "card px-3 py-3 space-y-3 text-xs";
 
-        // Row 1: date/time/field (stack on small screens)
+        // Row 1: date/time/field
         const metaRow = document.createElement("div");
         metaRow.className = "grid grid-cols-1 sm:grid-cols-3 gap-2";
 
@@ -519,13 +528,12 @@
         metaRow.appendChild(timeWrap);
         metaRow.appendChild(fieldWrap);
 
-        // Row 2: teams + scores (stack on narrow, side-by-side on wider screens)
+        // Row 2: teams (no scores here)
         const vsRow = document.createElement("div");
-        vsRow.className = "grid grid-cols-1 md:grid-cols-5 gap-2 items-center";
+        vsRow.className = "grid grid-cols-1 md:grid-cols-2 gap-2 items-center";
 
         function makeTeamSelect(labelText, value, onChange) {
           const wrap = document.createElement("div");
-          wrap.className = "md:col-span-2";
 
           const label = document.createElement("div");
           label.textContent = labelText;
@@ -554,47 +562,7 @@
         const homeSelWrap = makeTeamSelect("Home Team", game.homeTeamId, v => game.homeTeamId = v);
         const awaySelWrap = makeTeamSelect("Away Team", game.awayTeamId, v => game.awayTeamId = v);
 
-        const scoreWrap = document.createElement("div");
-        scoreWrap.className = "flex flex-col items-center justify-center";
-
-        const scoreLabel = document.createElement("div");
-        scoreLabel.textContent = "Score";
-        scoreLabel.className = "text-[11px] mb-1 text-slate-300 text-center";
-
-        const scoreRow = document.createElement("div");
-        scoreRow.className = "flex items-center gap-1";
-
-        const hgInput = document.createElement("input");
-        hgInput.type = "number";
-        hgInput.min = 0;
-        hgInput.className = "w-12 rounded-md px-2 py-1 text-base text-center";
-        hgInput.value = (game.homeGoals != null ? game.homeGoals : "").toString();
-        hgInput.addEventListener("input", () => {
-          game.homeGoals = hgInput.value === "" ? null : parseInt(hgInput.value, 10);
-        });
-
-        const dash = document.createElement("span");
-        dash.textContent = "-";
-        dash.className = "text-base text-slate-300";
-
-        const agInput = document.createElement("input");
-        agInput.type = "number";
-        agInput.min = 0;
-        agInput.className = "w-12 rounded-md px-2 py-1 text-base text-center";
-        agInput.value = (game.awayGoals != null ? game.awayGoals : "").toString();
-        agInput.addEventListener("input", () => {
-          game.awayGoals = agInput.value === "" ? null : parseInt(agInput.value, 10);
-        });
-
-        scoreRow.appendChild(hgInput);
-        scoreRow.appendChild(dash);
-        scoreRow.appendChild(agInput);
-
-        scoreWrap.appendChild(scoreLabel);
-        scoreWrap.appendChild(scoreRow);
-
         vsRow.appendChild(homeSelWrap);
-        vsRow.appendChild(scoreWrap);
         vsRow.appendChild(awaySelWrap);
 
         // Row 3: delete button
@@ -615,6 +583,94 @@
         card.appendChild(actionRow);
 
         gameListEl.appendChild(card);
+      });
+
+      // Scores list
+      renderScores(poolTeams, games);
+    }
+
+    // Separate score editor list
+    function renderScores(poolTeams, games) {
+      const teamMap = {};
+      poolTeams.forEach(t => {
+        teamMap[t.id] = t.name || "Unnamed";
+      });
+
+      // Sort games by date/time to make score entry flow better
+      const sortedGames = [...games].sort((a, b) => {
+        const aKey = (a.date || "") + " " + (a.time || "");
+        const bKey = (b.date || "") + " " + (b.time || "");
+        return aKey.localeCompare(bKey);
+      });
+
+      scoreListEl.innerHTML = "";
+
+      if (sortedGames.length === 0) {
+        scoreListEl.innerHTML = `<p class="text-xs text-slate-400">No games scheduled yet.</p>`;
+        return;
+      }
+
+      sortedGames.forEach(game => {
+        const row = document.createElement("div");
+        row.className = "card px-3 py-2 text-xs flex flex-col gap-1";
+
+        const meta = document.createElement("div");
+        meta.className = "text-[11px] text-slate-300 flex flex-wrap gap-2";
+        const dateStr = game.date || "";
+        const timeStr = game.time || "";
+        const fieldStr = game.field || "";
+        const homeName = teamMap[game.homeTeamId] || "Home TBD";
+        const awayName = teamMap[game.awayTeamId] || "Away TBD";
+        meta.textContent = `${dateStr} ${timeStr} ${fieldStr ? "· " + fieldStr : ""}`;
+
+        const teamsLine = document.createElement("div");
+        teamsLine.className = "text-[11px] text-slate-200";
+        teamsLine.textContent = `${homeName} vs ${awayName}`;
+
+        const scoreRow = document.createElement("div");
+        scoreRow.className = "flex items-center gap-2 mt-1 flex-wrap";
+
+        const homeLabel = document.createElement("span");
+        homeLabel.textContent = "Home";
+        homeLabel.className = "text-[11px]";
+
+        const hgInput = document.createElement("input");
+        hgInput.type = "number";
+        hgInput.min = 0;
+        hgInput.className = "w-14 rounded-md px-2 py-1 text-base text-center";
+        hgInput.value = (game.homeGoals != null ? game.homeGoals : "").toString();
+        hgInput.addEventListener("input", () => {
+          game.homeGoals = hgInput.value === "" ? null : parseInt(hgInput.value, 10);
+        });
+
+        const dash = document.createElement("span");
+        dash.textContent = "-";
+        dash.className = "text-base text-slate-300";
+
+        const awayLabel = document.createElement("span");
+        awayLabel.textContent = "Away";
+        awayLabel.className = "text-[11px]";
+
+        const agInput = document.createElement("input");
+        agInput.type = "number";
+        agInput.min = 0;
+        agInput.className = "w-14 rounded-md px-2 py-1 text-base text-center";
+        agInput.value = (game.awayGoals != null ? game.awayGoals : "").toString();
+        agInput.addEventListener("input", () => {
+          game.awayGoals = agInput.value === "" ? null : parseInt(agInput.value, 10);
+        });
+
+        scoreRow.appendChild(homeLabel);
+        scoreRow.appendChild(hgInput);
+        scoreRow.appendChild(dash);
+        scoreRow.appendChild(agInput);
+        scoreRow.appendChild(awayLabel);
+
+        row.appendChild(meta);
+        row.appendChild(teamsLine);
+        row.appendChild(scoreRow);
+
+        scoreListEl.appendChild(row);
       });
     }
 
