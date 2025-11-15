@@ -61,7 +61,7 @@
           Manage pools, teams, scores, and schedules. Changes sync to all division pages.
         </p>
       </div>
-      <div class="flex items-center gap-3 text-sm">
+      <div class="flex flex-col items-end gap-1 text-sm">
         <span id="saveStatus" class="text-slate-300">
           Status: <span class="font-semibold">Loaded</span>
         </span>
@@ -135,23 +135,25 @@
       <section class="glass rounded-2xl p-4 flex flex-col">
         <h2 class="text-sm font-semibold mb-3">Step 4: Games & Scores</h2>
 
-        <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
           <div>
             <label class="block mb-1">Pool</label>
             <select id="gamePoolSelect" class="w-full rounded-md px-3 py-2"></select>
           </div>
-          <div>
-            <label class="block mb-1">Default Date</label>
-            <input id="defaultDate" type="date" class="w-full rounded-md px-3 py-2" />
-          </div>
-          <div>
-            <label class="block mb-1">Default Time</label>
-            <input id="defaultTime" type="time" class="w-full rounded-md px-3 py-2" />
-          </div>
-          <div>
-            <label class="block mb-1">Default Field</label>
-            <input id="defaultField" type="text" placeholder="Field"
-                   class="w-full rounded-md px-3 py-2" />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div>
+              <label class="block mb-1">Default Date</label>
+              <input id="defaultDate" type="date" class="w-full rounded-md px-3 py-2" />
+            </div>
+            <div>
+              <label class="block mb-1">Default Time</label>
+              <input id="defaultTime" type="time" class="w-full rounded-md px-3 py-2" />
+            </div>
+            <div>
+              <label class="block mb-1">Default Field</label>
+              <input id="defaultField" type="text" placeholder="Field"
+                     class="w-full rounded-md px-3 py-2" />
+            </div>
           </div>
         </div>
 
@@ -228,27 +230,25 @@
         setStatus("Loaded", "text-emerald-300");
         renderAll();
       } catch (err) {
-        console.error(err);
+        console.error("Load error", err);
         setStatus("Load failed", "text-rose-400");
       }
     }
 
-    // Use no-cors for POST; don't parse response
+    // Super-simple save: no headers, no response parsing, show error text if any
     async function saveState() {
+      setStatus("Saving…", "text-sky-300");
+      saveBtn.disabled = true;
       try {
-        setStatus("Saving…", "text-sky-300");
-        saveBtn.disabled = true;
-
         await fetch(API_URL, {
           method: "POST",
           mode: "no-cors",
           body: JSON.stringify(state)
         });
-
         setStatus("Saved (refresh public pages to see updates)", "text-emerald-300");
       } catch (err) {
-        console.error(err);
-        setStatus("Save error", "text-rose-400");
+        console.error("Save error", err);
+        setStatus("Save error: " + String(err), "text-rose-400");
       } finally {
         saveBtn.disabled = false;
       }
@@ -421,7 +421,7 @@
       renderAll();
     });
 
-    // Games (more visual cards, bigger score inputs)
+    // Games (cards layout, responsive, bigger scores)
     function renderGames() {
       const pools = getDivisionPools();
       const teams = getDivisionTeams();
@@ -444,11 +444,11 @@
 
       games.forEach(game => {
         const card = document.createElement("div");
-        card.className = "card px-3 py-3 space-y-2 text-xs";
+        card.className = "card px-3 py-3 space-y-3 text-xs";
 
-        // Row 1: date/time/field
+        // Row 1: date/time/field (stack on small screens)
         const metaRow = document.createElement("div");
-        metaRow.className = "grid grid-cols-3 gap-2";
+        metaRow.className = "grid grid-cols-1 sm:grid-cols-3 gap-2";
 
         const dateWrap = document.createElement("div");
         const dateLabel = document.createElement("label");
@@ -491,13 +491,13 @@
         metaRow.appendChild(timeWrap);
         metaRow.appendChild(fieldWrap);
 
-        // Row 2: teams + scores
+        // Row 2: teams + scores (stack on narrow, side-by-side on wider screens)
         const vsRow = document.createElement("div");
-        vsRow.className = "grid grid-cols-5 gap-2 items-center mt-1";
+        vsRow.className = "grid grid-cols-1 md:grid-cols-5 gap-2 items-center";
 
         function makeTeamSelect(labelText, value, onChange) {
           const wrap = document.createElement("div");
-          wrap.className = "col-span-2";
+          wrap.className = "md:col-span-2";
 
           const label = document.createElement("div");
           label.textContent = labelText;
