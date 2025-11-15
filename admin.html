@@ -102,8 +102,9 @@
       </p>
     </section>
 
-    <div class="grid lg:grid-cols-3 gap-4 mb-10">
-      <!-- Pools -->
+    <!-- Steps 2–4 in three columns -->
+    <div class="grid lg:grid-cols-3 gap-4 mb-6">
+      <!-- Step 2: Pools -->
       <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 2: Pools</h2>
         <div class="space-y-2" id="poolList"></div>
@@ -113,7 +114,7 @@
         </button>
       </section>
 
-      <!-- Teams -->
+      <!-- Step 3: Teams -->
       <section class="glass rounded-2xl p-4">
         <h2 class="text-sm font-semibold mb-3">Step 3: Teams & Deductions</h2>
         <label class="block text-xs mb-1">Pool</label>
@@ -131,9 +132,9 @@
         </p>
       </section>
 
-      <!-- Games -->
+      <!-- Step 4: Games / Schedule -->
       <section class="glass rounded-2xl p-4">
-        <h2 class="text-sm font-semibold mb-3">Step 4: Games & Scores</h2>
+        <h2 class="text-sm font-semibold mb-3">Step 4: Games & Schedule</h2>
 
         <!-- Top: controls & add game -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-xs">
@@ -165,18 +166,22 @@
 
         <!-- Schedule editor -->
         <h3 class="text-xs font-semibold mb-2 text-slate-200">Schedule / Edit Games</h3>
-        <div id="gameList" class="space-y-3 mb-4"></div>
-
-        <!-- Score editor -->
-        <h3 class="text-xs font-semibold mb-2 text-slate-200">Enter / Update Scores</h3>
-        <div id="scoreList" class="space-y-2"></div>
-
-        <p class="mt-4 text-[11px] text-slate-400">
-          Scoring: Win 6 pts, Tie 3 pts, Loss 0 pts, +1 pt per goal (max 3 per game),
-          +1 pt shutout bonus, minus any deductions.
-        </p>
+        <div id="gameList" class="space-y-3"></div>
       </section>
     </div>
+
+    <!-- Step 5: Scores – full width, only this expands -->
+    <section class="glass rounded-2xl p-4 mb-8">
+      <h2 class="text-sm font-semibold mb-3">Step 5: Enter / Update Scores</h2>
+      <p class="text-[11px] text-slate-400 mb-3">
+        Scores are grouped by the same pool selected in <span class="font-semibold">Step 4</span>.
+      </p>
+      <div id="scoreList" class="space-y-2"></div>
+      <p class="mt-4 text-[11px] text-slate-400">
+        Scoring: Win 6 pts, Tie 3 pts, Loss 0 pts, +1 pt per goal (max 3 per game),
+        +1 pt shutout bonus, minus any deductions.
+      </p>
+    </section>
   </div>
 
   <script>
@@ -302,7 +307,7 @@
       poolListEl.innerHTML = "";
       pools.forEach(pool => {
         const row = document.createElement("div");
-        row.className = "card px-3 py-2 flex items-center gap-2 text-sm";
+        row.className = "card px-3 py-2 flex flex-col sm:flex-row sm:items-center gap-2 text-sm";
 
         const input = document.createElement("input");
         input.type = "text";
@@ -314,10 +319,10 @@
         });
 
         const del = document.createElement("button");
-        del.className = "px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
+        del.type = "button";
+        del.className = "self-start sm:self-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
         del.textContent = "Delete";
         del.addEventListener("click", () => {
-          if (!confirm("Delete this pool, its teams, and games?")) return;
           state.pools = state.pools.filter(p => p.id !== pool.id);
           state.teams = state.teams.filter(t => t.poolId !== pool.id);
           state.games = state.games.filter(g => g.poolId !== pool.id);
@@ -390,7 +395,7 @@
 
       filteredTeams.forEach(team => {
         const row = document.createElement("div");
-        row.className = "card px-3 py-2 flex items-center gap-3 text-sm";
+        row.className = "card px-3 py-2 flex flex-col sm:flex-row sm:items-center gap-3 text-sm";
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
@@ -421,10 +426,10 @@
         dedGroup.appendChild(dedInput);
 
         const del = document.createElement("button");
-        del.className = "px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
+        del.type = "button";
+        del.className = "self-start sm:self-auto px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
         del.textContent = "Delete";
         del.addEventListener("click", () => {
-          if (!confirm("Delete this team and its games?")) return;
           state.teams = state.teams.filter(t => t.id !== team.id);
           state.games = state.games.filter(g => g.homeTeamId !== team.id && g.awayTeamId !== team.id);
           renderAll();
@@ -552,7 +557,11 @@
             sel.appendChild(opt);
           });
           sel.value = value || "";
-          sel.addEventListener("change", () => onChange(sel.value || null));
+          sel.addEventListener("change", () => {
+            onChange(sel.value || null);
+            // Update score list immediately when teams change
+            renderScores(poolTeams, games);
+          });
 
           wrap.appendChild(label);
           wrap.appendChild(sel);
@@ -569,10 +578,10 @@
         const actionRow = document.createElement("div");
         actionRow.className = "flex justify-end mt-1";
         const del = document.createElement("button");
+        del.type = "button";
         del.className = "px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-500 text-[11px]";
         del.textContent = "Delete Game";
         del.addEventListener("click", () => {
-          if (!confirm("Delete this game?")) return;
           state.games = state.games.filter(g => g.id !== game.id);
           renderGames();
         });
@@ -585,11 +594,11 @@
         gameListEl.appendChild(card);
       });
 
-      // Scores list
+      // Scores list (Step 5)
       renderScores(poolTeams, games);
     }
 
-    // Separate score editor list
+    // Separate score editor list (Step 5)
     function renderScores(poolTeams, games) {
       const teamMap = {};
       poolTeams.forEach(t => {
